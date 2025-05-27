@@ -7,7 +7,7 @@ from telegram import Bot
 from telegram.ext import Updater, CommandHandler
 
 # === НАСТРОЙКИ ===
-TELEGRAM_TOKEN = '8057547167:AAHi1-zckxWg_jVPXxG2PSy6mMTZVuu3Fgo'  # <-- Вставь сюда свой токен вручную
+TELEGRAM_TOKEN = '8057547167:AAG_GXS_QctYyIN-29JmlwWxOb5XY68I-Tk'  # <-- Вставь сюда свой токен вручную
 CHAT_ID = None
 PROJECT_FOLDER = './project'
 BACKUP_FOLDER = './'
