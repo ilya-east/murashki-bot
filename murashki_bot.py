@@ -5,8 +5,8 @@ import requests
 from datetime import datetime
 from telegram.ext import Updater, CommandHandler
 
-TELEGRAM_TOKEN = os.environ.get("8057547167:AAG_GXS_QctYyIN-29JmlwWxOb5XY68I-Tk")
-TELEGRAM_CHAT_ID = os.environ.get("1043974866")
+TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN")
+TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
 
 FOLDER_TO_BACKUP = "project"
 BACKUP_FOLDER = "backups"
