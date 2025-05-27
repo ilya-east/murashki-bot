@@ -1,62 +1,62 @@
 import os
 import time
 import zipfile
+import requests
 from datetime import datetime
-from threading import Thread
-from telegram import Bot
-from telegram.ext import Updater, CommandHandler
 
-# === НАСТРОЙКИ ===
-TELEGRAM_TOKEN = '8057547167:AAG_GXS_QctYyIN-29JmlwWxOb5XY68I-Tk'  # <-- Вставь сюда свой токен вручную
-CHAT_ID = None
-PROJECT_FOLDER = './project'
-BACKUP_FOLDER = './'
-SEND_INTERVAL = 1800  # 30 минут
+TELEGRAM_TOKEN = os.environ.get("8057547167:AAG_GXS_QctYyIN-29JmlwWxOb5XY68I-Tk")
+TELEGRAM_CHAT_ID = os.environ.get("1043974866")
 
-bot = Bot(token=TELEGRAM_TOKEN)
+FOLDER_TO_BACKUP = "project"
+BACKUP_FOLDER = "backups"
+DELAY_SECONDS = 60 * 30  # 30 минут
 
-def make_backup():
-    now = datetime.now().strftime('%Y-%m-%d_%H-%M')
-    filename = f'backup_{now}.zip'
-    zip_path = os.path.join(BACKUP_FOLDER, filename)
+def create_backup():
+    if not os.path.exists(BACKUP_FOLDER):
+        os.makedirs(BACKUP_FOLDER)
 
-    file_count = 0
-    total_size = 0
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M")
+    zip_filename = f"backup_{timestamp}.zip"
+    zip_path = os.path.join(BACKUP_FOLDER, zip_filename)
 
-    with zipfile.ZipFile(zip_path, 'w') as zipf:
-        for root, _, files in os.walk(PROJECT_FOLDER):
+    with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zipf:
+        for root, dirs, files in os.walk(FOLDER_TO_BACKUP):
             for file in files:
-                file_path = os.path.join(root, file)
-                arcname = os.path.relpath(file_path, PROJECT_FOLDER)
-                zipf.write(file_path, arcname)
-                file_count += 1
-                total_size += os.path.getsize(file_path)
+                filepath = os.path.join(root, file)
+                arcname = os.path.relpath(filepath, FOLDER_TO_BACKUP)
+                zipf.write(filepath, arcname)
 
-    return zip_path, file_count, total_size
+    return zip_path
 
-def send_backup():
-    global CHAT_ID
+def send_to_telegram(file_path):
+    url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendDocument"
+    with open(file_path, "rb") as file:
+        response = requests.post(url, data={
+            "chat_id": TELEGRAM_CHAT_ID,
+            "caption": f"Бекап сайта: {os.path.basename(file_path)}"
+        }, files={"document": file})
+    return response.ok, response.text
+
+def log(msg):
+    print(f"[{datetime.now().strftime('%H:%M:%S')}] {msg}")
+
+def main_loop():
+    log("Запущен Murashki Backup Bot.")
     while True:
-        if CHAT_ID:
-            zip_path, count, size = make_backup()
-            now = datetime.now().strftime('%H:%M')
-            caption = f"Murashki Bot: отправлен бекап\nФайлов: {count} | Размер: {round(size/1024/1024, 2)} MB | Время: {now}"
-            bot.send_document(chat_id=CHAT_ID, document=open(zip_path, 'rb'), filename=os.path.basename(zip_path), caption=caption)
-        time.sleep(SEND_INTERVAL)
+        log("Создание архива...")
+        archive_path = create_backup()
+        log(f"Архив создан: {archive_path}")
 
-def start(update, context):
-    global CHAT_ID
-    CHAT_ID = update.effective_chat.id
-    context.bot.send_message(chat_id=CHAT_ID, text="Привет! Я — Murashki Bot. Бекапы будут приходить каждые 30 минут.")
+        log("Отправка в Telegram...")
+        success, response = send_to_telegram(archive_path)
 
-def main():
-    updater = Updater(token=TELEGRAM_TOKEN, use_context=True)
-    dp = updater.dispatcher
-    dp.add_handler(CommandHandler("start", start))
+        if success:
+            log("Бекап успешно отправлен.")
+        else:
+            log(f"Ошибка при отправке: {response}")
 
-    Thread(target=send_backup, daemon=True).start()
-    updater.start_polling()
-    updater.idle()
+        log(f"Ожидание {DELAY_SECONDS // 60} минут...")
+        time.sleep(DELAY_SECONDS)
 
-if __name__ == '__main__':
-    main()
+if __name__ == "__main__":
+    main_loop()
