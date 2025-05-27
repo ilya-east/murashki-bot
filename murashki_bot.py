@@ -7,11 +7,11 @@ from telegram import Bot
 from telegram.ext import Updater, CommandHandler
 
 # === НАСТРОЙКИ ===
-TELEGRAM_TOKEN = os.environ.get('8057547167:AAHi1-zckxWg_jVPXxG2PSy6mMTZVuu3Fgo')
-CHAT_ID = None  # будет запомнен после /start
+TELEGRAM_TOKEN = '8057547167:AAHi1-zckxWg_jVPXxG2PSy6mMTZVuu3Fgo'  # <-- Вставь сюда свой токен вручную
+CHAT_ID = None
 PROJECT_FOLDER = './project'
 BACKUP_FOLDER = './'
-SEND_INTERVAL = 1800  # каждые 30 минут
+SEND_INTERVAL = 1800  # 30 минут
 
 bot = Bot(token=TELEGRAM_TOKEN)
 
@@ -47,7 +47,7 @@ def send_backup():
 def start(update, context):
     global CHAT_ID
     CHAT_ID = update.effective_chat.id
-    context.bot.send_message(chat_id=CHAT_ID, text="Привет! Я — Murashki Bot. Буду присылать бекапы каждые 30 минут.")
+    context.bot.send_message(chat_id=CHAT_ID, text="Привет! Я — Murashki Bot. Бекапы будут приходить каждые 30 минут.")
 
 def main():
     updater = Updater(token=TELEGRAM_TOKEN, use_context=True)
