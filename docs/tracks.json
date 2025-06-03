@@ -3,13 +3,13 @@
     "title": "dark",
     "author": "Murashki",
     "audio": "audio/dark.mp3",
-    "cover": "covers/dark.png"
+    "cover": "covers/dark.jpg"
   },
   {
     "title": "fight",
     "author": "Murashki",
     "audio": "audio/fight.mp3",
-    "cover": "covers/fight.png"
+    "cover": "covers/fight.jpg"
   },
   {
     "title": "kiss",
@@ -27,6 +27,6 @@
     "title": "standup",
     "author": "Murashki",
     "audio": "audio/standup.mp3",
-    "cover": "covers/standup.png"
+    "cover": "covers/standup.jpg"
   }
 ]
