@@ -1,35 +1,35 @@
 import os
 import json
 
-# Пути к папкам
+# Пути к папкам (относительно текущей директории)
 audio_folder = "docs/audio"
 cover_folder = "docs/covers"
+output_file = "docs/tracks.json"
 
-# Основной список треков
 tracks = []
 
 for filename in os.listdir(audio_folder):
-    if filename.lower().endswith(".mp3"):
+    if filename.endswith(".mp3"):
         name = os.path.splitext(filename)[0]
 
-        audio_url = f"https://ilya-east.github.io/murashki-bot/docs/audio/{filename}"
+        # Ищем подходящую обложку
+        cover = ""
+        for ext in [".png", ".jpg", ".jpeg", ".PNG", ".JPG"]:
+            candidate = os.path.join(cover_folder, name + ext)
+            if os.path.exists(candidate):
+                cover = f"covers/{name}{ext}"
+                break
 
-        # Проверка на обложку
-        cover_url = ""
-        if os.path.exists(os.path.join(cover_folder, f"{name}.jpg")):
-            cover_url = f"https://ilya-east.github.io/murashki-bot/docs/covers/{name}.jpg"
-        elif os.path.exists(os.path.join(cover_folder, f"{name}.png")):
-            cover_url = f"https://ilya-east.github.io/murashki-bot/docs/covers/{name}.png"
-
-        tracks.append({
+        track = {
             "title": name,
             "author": "Murashki",
-            "audio": audio_url,
-            "cover": cover_url
-        })
+            "audio": f"audio/{filename}",
+            "cover": cover
+        }
+        tracks.append(track)
 
-# Сохранение в JSON
-with open("docs/tracks.json", "w", encoding="utf-8") as f:
+# Сохраняем JSON
+with open(output_file, "w", encoding="utf-8") as f:
     json.dump(tracks, f, ensure_ascii=False, indent=2)
 
-print(f"[✓] Сохранено {len(tracks)} треков в tracks.json")
+print(f"[✅] Сохранено {len(tracks)} треков в {output_file}")

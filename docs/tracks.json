@@ -2,31 +2,31 @@
   {
     "title": "dark",
     "author": "Murashki",
-    "audio": "https://ilya-east.github.io/murashki-bot/docs/audio/dark.mp3",
-    "cover": "https://ilya-east.github.io/murashki-bot/docs/covers/dark.png"
+    "audio": "audio/dark.mp3",
+    "cover": "covers/dark.png"
   },
   {
     "title": "fight",
     "author": "Murashki",
-    "audio": "https://ilya-east.github.io/murashki-bot/docs/audio/fight.mp3",
-    "cover": "https://ilya-east.github.io/murashki-bot/docs/covers/fight.png"
+    "audio": "audio/fight.mp3",
+    "cover": "covers/fight.png"
   },
   {
     "title": "kiss",
     "author": "Murashki",
-    "audio": "https://ilya-east.github.io/murashki-bot/docs/audio/kiss.mp3",
-    "cover": "https://ilya-east.github.io/murashki-bot/docs/covers/kiss.jpg"
+    "audio": "audio/kiss.mp3",
+    "cover": "covers/kiss.jpg"
   },
   {
     "title": "kunai",
     "author": "Murashki",
-    "audio": "https://ilya-east.github.io/murashki-bot/docs/audio/kunai.mp3",
-    "cover": "https://ilya-east.github.io/murashki-bot/docs/covers/kunai.jpg"
+    "audio": "audio/kunai.mp3",
+    "cover": "covers/kunai.jpg"
   },
   {
     "title": "standup",
     "author": "Murashki",
-    "audio": "https://ilya-east.github.io/murashki-bot/docs/audio/standup.mp3",
-    "cover": "https://ilya-east.github.io/murashki-bot/docs/covers/standup.png"
+    "audio": "audio/standup.mp3",
+    "cover": "covers/standup.png"
   }
 ]
