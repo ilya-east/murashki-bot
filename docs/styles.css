@@ -83,3 +83,30 @@ body {
   justify-content: center;
   height: 36px;
 }
+
+@media (max-width: 768px) {
+  .players-container {
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  .player-column {
+    width: 100%;
+  }
+
+  .custom-player {
+    width: 100%;
+    flex-direction: row;
+    padding: 12px;
+  }
+
+  .player-info {
+    width: auto;
+    overflow: visible;
+  }
+
+  .player-title, .player-author {
+    overflow-wrap: normal;
+    white-space: normal;
+  }
+}
