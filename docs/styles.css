@@ -6,12 +6,18 @@ body {
 
 .players-container {
   display: flex;
-  flex-direction: column;
   gap: 20px;
   padding: 40px 10px;
   max-width: 1000px;
   margin: 0 auto;
   box-sizing: border-box;
+}
+
+.player-column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: 1;
 }
 
 .custom-player {
@@ -87,6 +93,27 @@ body {
 
 @media (max-width: 768px) {
   .players-container {
+    flex-direction: column;
     padding: 20px;
+  }
+
+  .player-column {
+    width: 100%;
+  }
+
+  .custom-player {
+    width: 100%;
+    flex-direction: row;
+    padding: 12px;
+  }
+
+  .player-info {
+    width: auto;
+    overflow: visible;
+  }
+
+  .player-title, .player-author {
+    overflow-wrap: normal;
+    white-space: normal;
   }
 }
