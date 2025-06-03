@@ -1,18 +1,22 @@
 body {
-  background: transparent;
+  background: #1c1c1c;
   color: #fff;
   font-family: sans-serif;
-  margin: 0;
 }
 
 .players-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 20px;
-  padding: 40px 20px;
-  max-width: 1000px;
-  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  padding: 40px 10px;
   box-sizing: border-box;
+}
+
+.player-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 20px;
+  width: 100%;
+  max-width: 960px;
 }
 
 .custom-player {
@@ -22,8 +26,8 @@ body {
   border-radius: 16px;
   padding: 16px 20px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-  gap: 16px;
   box-sizing: border-box;
+  gap: 16px;
 }
 
 .custom-player img.cover {
@@ -43,6 +47,8 @@ body {
   font-weight: bold;
   font-size: 16px;
   color: #fff;
+  white-space: normal;
+  overflow-wrap: break-word;
 }
 
 .player-author {
@@ -84,19 +90,20 @@ body {
   height: 36px;
 }
 
+/* Мобильная адаптация */
 @media (max-width: 768px) {
   .players-container {
-    flex-direction: column;
     padding: 20px;
   }
 
-  .player-column {
-    width: 100%;
+  .player-grid {
+    grid-template-columns: 1fr;
+    max-width: 100%;
   }
 
   .custom-player {
-    width: 100%;
     flex-direction: row;
+    width: 100%;
     padding: 12px;
   }
 
@@ -105,8 +112,9 @@ body {
     overflow: visible;
   }
 
-  .player-title, .player-author {
-    overflow-wrap: normal;
+  .player-title,
+  .player-author {
     white-space: normal;
+    overflow-wrap: normal;
   }
 }
