@@ -1,100 +1,31 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Murashki Player</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-database-compat.js"></script>
 </head>
 <body>
-  <div class="players-container" id="players"></div>
+  <div class="players-container">
+    <div class="player-column" id="player-column"></div>
+  </div>
 
   <script>
-    fetch('tracks.json')
-      .then(res => res.json())
-      .then(tracks => {
-        const container = document.getElementById("players");
-        let currentAudio = null;
-        let currentBtn = null;
-
-        tracks.forEach(track => {
-          const el = document.createElement("div");
-          el.className = "custom-player";
-          el.innerHTML = `
-            <img class="cover" src="${track.cover}" alt="cover">
-            <div class="player-info">
-              <div class="player-title">${track.title}</div>
-              <div class="player-author">${track.author}</div>
-            </div>
-            <div class="player-controls">
-              <button class="btn play-btn">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff">
-                  <path d="M8 5v14l11-7z"/>
-                </svg>
-              </button>
-              <button class="btn like-btn">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff">
-                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 
-                           2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09
-                           C13.09 3.81 14.76 3 16.5 3 
-                           19.58 3 22 5.42 22 8.5
-                           c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                </svg>
-              </button>
-              <span class="like-count">0</span>
-            </div>
-            <audio src="${track.audio}"></audio>
-          `;
-          container.appendChild(el);
-
-          const audio = el.querySelector('audio');
-          const btn = el.querySelector('.play-btn');
-          const likeBtn = el.querySelector('.like-btn');
-          const likeCount = el.querySelector('.like-count');
-          const trackId = track.audio.split('/').pop().split('.')[0];
-
-          btn.addEventListener("click", () => {
-            if (currentAudio && currentAudio !== audio) {
-              currentAudio.pause();
-              currentBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>`;
-            }
-
-            if (audio.paused) {
-              audio.play();
-              btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
-              currentAudio = audio;
-              currentBtn = btn;
-            } else {
-              audio.pause();
-              btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>`;
-            }
-
-            audio.onended = () => {
-              btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>`;
-            };
-          });
-
-          likeBtn.addEventListener("click", () => {
-            const key = `liked_${trackId}`;
-            const liked = localStorage.getItem(key);
-            let count = parseInt(likeCount.textContent) || 0;
-
-            if (liked) {
-              likeBtn.querySelector('svg').setAttribute("fill", "#fff");
-              localStorage.removeItem(key);
-              likeCount.textContent = count - 1;
-            } else {
-              likeBtn.querySelector('svg').setAttribute("fill", "#ff0000");
-              localStorage.setItem(key, "true");
-              likeCount.textContent = count + 1;
-            }
-          });
-
-          if (localStorage.getItem(`liked_${trackId}`)) {
-            likeBtn.querySelector('svg').setAttribute("fill", "#ff0000");
-            likeCount.textContent = 1;
-          }
-        });
-      });
+    const firebaseConfig = {
+      apiKey: "AIzaSyBdmyEmyzp2eJK-wqkfCS-OSZrvQWy6Pg",
+      authDomain: "murashki-6f04e.firebaseapp.com",
+      databaseURL: "https://murashki-6f04e-default-rtdb.firebaseio.com",
+      projectId: "murashki-6f04e",
+      storageBucket: "murashki-6f04e.appspot.com",
+      messagingSenderId: "687056541772",
+      appId: "1:687056541772:web:2a037f46311812719bce9"
+    };
+    firebase.initializeApp(firebaseConfig);
   </script>
+
+  <script src="script.js"></script>
 </body>
 </html>
