@@ -1,12 +1,15 @@
 body {
-  background: transparent;
+  background: #1c1c1c;
   color: #fff;
   font-family: sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
 .players-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 20px;
   padding: 40px 10px;
   max-width: 1000px;
@@ -21,8 +24,10 @@ body {
   border-radius: 16px;
   padding: 16px 20px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-  box-sizing: border-box;
   gap: 16px;
+  flex: 1 1 calc(50% - 20px);
+  min-width: 300px;
+  box-sizing: border-box;
 }
 
 .custom-player img.cover {
@@ -85,25 +90,12 @@ body {
   height: 36px;
 }
 
-/* 📱 Мобильная адаптация */
 @media (max-width: 768px) {
-  .players-container {
-    grid-template-columns: 1fr;
-    padding: 20px;
-  }
-
   .custom-player {
-    flex-direction: row;
-    padding: 12px;
+    flex: 1 1 100%;
   }
 
-  .player-info {
-    width: auto;
-    overflow: visible;
-  }
-
-  .player-title, .player-author {
-    overflow-wrap: normal;
-    white-space: normal;
+  .players-container {
+    flex-direction: column;
   }
 }
