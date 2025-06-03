@@ -1,0 +1,58 @@
+body {
+  background: #1c1c1c;
+  color: #fff;
+  font-family: sans-serif;
+  padding: 20px;
+}
+
+.players-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.custom-player {
+  display: flex;
+  align-items: center;
+  background: #2d263a;
+  border-radius: 16px;
+  padding: 16px 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  width: 100%;
+  max-width: 440px;
+  gap: 16px;
+}
+
+.cover {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.player-info {
+  flex-grow: 1;
+}
+
+.player-title {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.player-author {
+  font-size: 13px;
+  color: #ccc;
+}
+
+.btn {
+  background: #3b3644;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+}
