@@ -2,14 +2,16 @@ body {
   background: #1c1c1c;
   color: #fff;
   font-family: sans-serif;
-  padding: 20px;
 }
 
 .players-container {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 20px;
-  justify-content: center;
+  padding: 40px 10px;
+  max-width: 1000px;
+  margin: 0 auto;
+  box-sizing: border-box;
 }
 
 .custom-player {
@@ -19,12 +21,11 @@ body {
   border-radius: 16px;
   padding: 16px 20px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-  width: 100%;
-  max-width: 440px;
+  box-sizing: border-box;
   gap: 16px;
 }
 
-.cover {
+.custom-player img.cover {
   width: 64px;
   height: 64px;
   border-radius: 12px;
@@ -34,16 +35,26 @@ body {
 
 .player-info {
   flex-grow: 1;
+  overflow: hidden;
 }
 
 .player-title {
   font-weight: bold;
   font-size: 16px;
+  color: #fff;
+  white-space: normal;
+  overflow-wrap: break-word;
 }
 
 .player-author {
   font-size: 13px;
   color: #ccc;
+  margin-top: 2px;
+}
+
+.player-controls {
+  display: flex;
+  gap: 12px;
 }
 
 .btn {
@@ -53,6 +64,29 @@ body {
   height: 36px;
   border-radius: 50%;
   color: #fff;
-  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.btn:hover {
+  background: #5a4e68;
+  transform: scale(1.08);
+}
+
+.like-count {
+  font-size: 13px;
+  color: #aaa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+}
+
+@media (max-width: 768px) {
+  .players-container {
+    padding: 20px;
+  }
 }

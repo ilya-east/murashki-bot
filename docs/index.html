@@ -1,31 +1,15 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Murashki Player</title>
-  <link rel="stylesheet" href="styles.css">
-  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-database-compat.js"></script>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="players-container">
-    <div class="player-column" id="player-column"></div>
-  </div>
-
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyBdmyEmyzp2eJK-wqkfCS-OSZrvQWy6Pg",
-      authDomain: "murashki-6f04e.firebaseapp.com",
-      databaseURL: "https://murashki-6f04e-default-rtdb.firebaseio.com",
-      projectId: "murashki-6f04e",
-      storageBucket: "murashki-6f04e.appspot.com",
-      messagingSenderId: "687056541772",
-      appId: "1:687056541772:web:2a037f46311812719bce9"
-    };
-    firebase.initializeApp(firebaseConfig);
-  </script>
-
+  <div class="players-container" id="players"></div>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-database-compat.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
