@@ -2,7 +2,7 @@ import requests
 import json
 
 # Твой OAuth токен
-TOKEN = "y0__xC20LSVCBizkDgggLXHsROWsAalJXhG9SZ_3bGIbDlwJ9TPdw"
+TOKEN = "..."
 
 HEADERS = {
     "Authorization": f"OAuth {TOKEN}"
