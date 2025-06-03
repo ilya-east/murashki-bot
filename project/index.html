@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Murashki Player</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="players-container" id="player-area"></div>
+
+  <script>
+    fetch('tracks.json')
+      .then(res => res.json())
+      .then(tracks => {
+        const container = document.getElementById('player-area');
+        tracks.forEach(track => {
+          const el = document.createElement('div');
+          el.className = 'custom-player';
+          el.innerHTML = `
+            <img class="cover" src="${track.cover}" alt="cover">
+            <div class="player-info">
+              <div class="player-title">${track.title}</div>
+              <div class="player-author">Murashki</div>
+            </div>
+            <div class="player-controls">
+              <button class="btn play-btn">▶</button>
+              <audio src="${track.audio}"></audio>
+            </div>
+          `;
+          container.appendChild(el);
+
+          const btn = el.querySelector('.play-btn');
+          const audio = el.querySelector('audio');
+          btn.addEventListener('click', () => {
+            if (audio.paused) {
+              audio.play();
+              btn.textContent = '⏸';
+            } else {
+              audio.pause();
+              btn.textContent = '▶';
+            }
+            audio.onended = () => btn.textContent = '▶';
+          });
+        });
+      });
+  </script>
+</body>
+</html>
