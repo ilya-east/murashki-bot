@@ -28,8 +28,9 @@ body {
 
 /* === Грид с плеерами === */
 .player-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  display: flex;
+  flex-wrap: nowrap; /* Не переносить плееры на новую строку */
+  overflow-x: auto; /* Добавляем горизонтальный скролл */
   gap: var(--gap);
   width: 100%;
   max-width: 960px;
@@ -45,6 +46,7 @@ body {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
   box-sizing: border-box;
   gap: var(--gap);
+  min-width: 320px; /* Минимальная ширина одного плеера */
 }
 
 /* === Обложка === */
