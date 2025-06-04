@@ -1,4 +1,4 @@
-:root {
+﻿:root {
   --bg-main: #2d263a;
   --bg-btn: #3b3644;
   --bg-btn-hover: #5a4e68;
@@ -29,7 +29,7 @@ body {
 /* === Грид с плеерами === */
 .player-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* Автоматическое размещение по ширине */
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: var(--gap);
   width: 100%;
   max-width: 960px;
@@ -45,7 +45,6 @@ body {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
   box-sizing: border-box;
   gap: var(--gap);
-  min-width: 320px; /* Минимальная ширина одного плеера */
 }
 
 /* === Обложка === */
@@ -110,8 +109,30 @@ body {
 
 /* === Мобильные устройства === */
 @media (max-width: 768px) {
+  .players-container {
+    padding: 12px 8px;
+  }
+
   .player-grid {
-    grid-template-columns: 1fr; /* На мобильных — один столбец */
-    gap: var(--gap);
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .custom-player {
+    flex-direction: row;
+    padding: 10px;
+  }
+
+  .player-title {
+    font-size: 15px;
+  }
+
+  .player-author {
+    font-size: 12px;
+  }
+
+  .btn {
+    width: 28px;
+    height: 28px;
   }
 }
