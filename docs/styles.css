@@ -98,11 +98,11 @@ body {
   }
 
   .player-column {
-    width: 100%;
+    width: 120%;
   }
 
   .custom-player {
-    width: 100%;
+    width: 120%;
     flex-direction: row;
     padding: 12px;
   }
