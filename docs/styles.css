@@ -28,9 +28,8 @@ body {
 
 /* === Грид с плеерами === */
 .player-grid {
-  display: flex;
-  flex-wrap: nowrap; /* Не переносить плееры на новую строку */
-  overflow-x: auto; /* Добавляем горизонтальный скролл */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* Автоматическое размещение по ширине */
   gap: var(--gap);
   width: 100%;
   max-width: 960px;
@@ -111,30 +110,8 @@ body {
 
 /* === Мобильные устройства === */
 @media (max-width: 768px) {
-  .players-container {
-    padding: 12px 8px;
-  }
-
   .player-grid {
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-
-  .custom-player {
-    flex-direction: row;
-    padding: 10px;
-  }
-
-  .player-title {
-    font-size: 15px;
-  }
-
-  .player-author {
-    font-size: 12px;
-  }
-
-  .btn {
-    width: 28px;
-    height: 28px;
+    grid-template-columns: 1fr; /* На мобильных — один столбец */
+    gap: var(--gap);
   }
 }
