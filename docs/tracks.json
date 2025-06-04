@@ -6,6 +6,12 @@
     "cover": "covers/dark.jpg"
   },
   {
+    "title": "detstvo",
+    "author": "Murashki",
+    "audio": "audio/detstvo.mp3",
+    "cover": "covers/detstvo.jpg"
+  },
+  {
     "title": "fight",
     "author": "Murashki",
     "audio": "audio/fight.mp3",
@@ -22,6 +28,18 @@
     "author": "Murashki",
     "audio": "audio/kunai.mp3",
     "cover": "covers/kunai.jpg"
+  },
+  {
+    "title": "roza",
+    "author": "Murashki",
+    "audio": "audio/roza.mp3",
+    "cover": "covers/roza.jpg"
+  },
+  {
+    "title": "samuray",
+    "author": "Murashki",
+    "audio": "audio/samuray.mp3",
+    "cover": "covers/samuray.jpg"
   },
   {
     "title": "standup",
