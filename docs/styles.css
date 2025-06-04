@@ -27,7 +27,7 @@ body {
   overflow-y: auto; /* Включаем вертикальный скролл */
   scroll-behavior: smooth; /* Плавность */
   -webkit-overflow-scrolling: touch; /* Для iOS */
-  min-height: 400px; /* Минимальная высота */
+  height: 400px; /* Фиксированная высота для прокрутки */
 }
 
 /* === Грид с плеерами === */
