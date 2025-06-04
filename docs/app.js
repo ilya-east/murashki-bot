@@ -44,7 +44,6 @@ fetch("tracks.json")
   })
   .catch((err) => console.error("Ошибка загрузки треков:", err));
 
-// Логика проигрывателя
 function initPlayerLogic() {
   let currentAudio = null;
   let currentBtn = null;
@@ -110,7 +109,6 @@ function initPlayerLogic() {
     });
   });
 
-  // Динамическая высота iframe
   function resizeIframe() {
     const height = document.body.scrollHeight;
     window.parent.postMessage({ type: 'resize', height }, '*');
