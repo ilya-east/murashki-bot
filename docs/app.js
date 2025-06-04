@@ -41,6 +41,48 @@ fetch("tracks.json")
     });
 
     initPlayerLogic();
+    // === Автоматическая прокрутка ===
+let autoScrollInterval = null;
+let isPaused = false;
+
+function startAutoScroll() {
+  if (autoScrollInterval) return; // Убедимся, что не запущено дважды
+
+  autoScrollInterval = setInterval(() => {
+    if (!isPaused) {
+      const container = document.querySelector('.players-container');
+      container.scrollTop += 1; // Скорость прокрутки (1px за шаг)
+
+      // Если достигли низа — начать сверху
+      if (container.scrollTop + container.clientHeight >= container.scrollHeight) {
+        container.scrollTop = 0;
+      }
+    }
+  }, 50); // Интервал обновления (чем меньше число — тем быстрее)
+}
+
+function pauseAutoScroll() {
+  isPaused = true;
+}
+
+function resumeAutoScroll() {
+  isPaused = false;
+}
+
+// === Начинаем прокрутку при загрузке ===
+window.addEventListener('load', () => {
+  startAutoScroll();
+
+  // Останавливаем прокрутку при клике/тапе
+  document.querySelector('.players-container').addEventListener('click', () => {
+    pauseAutoScroll();
+    console.log("Прокрутка остановлена");
+    
+    // Возобновить через 5 секунд (можно убрать)
+    setTimeout(resumeAutoScroll, 5000);
+  });
+});
+
   })
   .catch((err) => console.error("Ошибка загрузки треков:", err));
 
