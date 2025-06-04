@@ -93,17 +93,17 @@ body {
 /* Мобильная адаптация */
 @media (max-width: 768px) {
   .players-container {
+    flex-direction: column;
     padding: 20px;
   }
 
-  .player-grid {
-    grid-template-columns: 1fr;
-    max-width: 100%;
+  .player-column {
+    width: 100%;
   }
 
   .custom-player {
-    flex-direction: row;
     width: 100%;
+    flex-direction: row;
     padding: 12px;
   }
 
@@ -112,9 +112,8 @@ body {
     overflow: visible;
   }
 
-  .player-title,
-  .player-author {
-    white-space: normal;
+  .player-title, .player-author {
     overflow-wrap: normal;
+    white-space: normal;
   }
 }
