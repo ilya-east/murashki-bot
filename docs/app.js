@@ -40,7 +40,6 @@ fetch("tracks.json")
       container.appendChild(wrapper);
     });
 
-    // После рендера всех плееров — инициализируем логику
     initPlayerLogic();
   })
   .catch((err) => console.error("Ошибка загрузки треков:", err));
@@ -59,17 +58,14 @@ function initPlayerLogic() {
     const trackId = audio.src.split("/").pop().split(".")[0];
     const dbRef = firebase.database().ref("likes/" + trackId);
 
-    // Подписка на количество лайков
     dbRef.on("value", (snapshot) => {
       likeCount.textContent = snapshot.val() || 0;
     });
 
-    // Состояние лайка из localStorage
     if (localStorage.getItem(`liked_${trackId}`)) {
       likeBtn.querySelector("svg").setAttribute("fill", "#ff0000");
     }
 
-    // Кнопка воспроизведения
     playBtn.addEventListener("click", () => {
       if (currentAudio && currentAudio !== audio) {
         currentAudio.pause();
@@ -92,12 +88,10 @@ function initPlayerLogic() {
       }
     });
 
-    // Сброс кнопки при завершении воспроизведения
     audio.addEventListener("ended", () => {
       playBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>';
     });
 
-    // Лайк
     likeBtn.addEventListener("click", () => {
       const likedKey = `liked_${trackId}`;
       const alreadyLiked = localStorage.getItem(likedKey);
@@ -115,13 +109,13 @@ function initPlayerLogic() {
       });
     });
   });
-}
 
-// === Динамическая высота iframe ===
-function resizeIframe() {
-  const height = document.body.scrollHeight;
-  window.parent.postMessage({ type: 'resize', height }, '*');
-}
+  // Динамическая высота iframe
+  function resizeIframe() {
+    const height = document.body.scrollHeight;
+    window.parent.postMessage({ type: 'resize', height }, '*');
+  }
 
-window.addEventListener('load', resizeIframe);
-window.addEventListener('resize', resizeIframe);
+  window.addEventListener('load', resizeIframe);
+  window.addEventListener('resize', resizeIframe);
+}
