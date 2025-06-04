@@ -116,3 +116,12 @@ function initPlayerLogic() {
     });
   });
 }
+
+// === Динамическая высота iframe ===
+function resizeIframe() {
+  const height = document.body.scrollHeight;
+  window.parent.postMessage({ type: 'resize', height }, '*');
+}
+
+window.addEventListener('load', resizeIframe);
+window.addEventListener('resize', resizeIframe);
