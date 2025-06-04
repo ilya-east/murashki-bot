@@ -2,21 +2,19 @@ body {
   background: transparent;
   color: #fff;
   font-family: sans-serif;
-  margin: 0;
-  padding: 0;
 }
 
 .players-container {
   display: flex;
   justify-content: center;
-  padding: 20px 10px;
+  padding: 40px 10px;
   box-sizing: border-box;
 }
 
 .player-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 15px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
   width: 100%;
   max-width: 960px;
 }
@@ -25,17 +23,18 @@ body {
   display: flex;
   align-items: center;
   background: #2d263a;
-  border-radius: 12px;
-  padding: 12px 15px;
+  border-radius: 16px;
+  padding: 16px 20px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
   box-sizing: border-box;
-  gap: 12px;
+  gap: 16px;
+  width: 100%;
 }
 
 .custom-player img.cover {
-  width: 56px;
-  height: 56px;
-  border-radius: 10px;
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
   object-fit: cover;
   flex-shrink: 0;
 }
@@ -43,38 +42,32 @@ body {
 .player-info {
   flex-grow: 1;
   overflow: hidden;
-  min-width: 0; /* Это важно для правильного обрезания текста */
 }
 
 .player-title {
   font-weight: bold;
-  font-size: 15px;
+  font-size: 16px;
   color: #fff;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  overflow-wrap: break-word;
 }
 
 .player-author {
-  font-size: 12px;
+  font-size: 13px;
   color: #ccc;
   margin-top: 2px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .player-controls {
   display: flex;
-  gap: 8px;
-  align-items: center;
+  gap: 12px;
 }
 
 .btn {
   background: #3b3644;
   border: none;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   color: #fff;
   display: flex;
@@ -82,7 +75,6 @@ body {
   justify-content: center;
   cursor: pointer;
   transition: background 0.2s ease, transform 0.2s ease;
-  flex-shrink: 0;
 }
 
 .btn:hover {
@@ -91,73 +83,38 @@ body {
 }
 
 .like-count {
-  font-size: 12px;
+  font-size: 13px;
   color: #aaa;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 32px;
-  flex-shrink: 0;
+  height: 36px;
 }
 
 /* Мобильная адаптация */
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   .players-container {
-    padding: 10px;
-  width: 100%;
+    padding: 20px;
   }
 
   .player-grid {
     grid-template-columns: 1fr;
-    gap: 10px;
+    gap: 16px;
   }
 
   .custom-player {
-    padding: 10px;
-    gap: 10px;
-    border-radius: 10px;
+    flex-direction: row;
+    padding: 12px;
   }
 
-  .custom-player img.cover {
-    width: 48px;
-    height: 48px;
-    border-radius: 8px;
+  .player-info {
+    width: auto;
+    overflow: visible;
   }
 
-  .player-title {
-    font-size: 14px;
-  }
-
+  .player-title,
   .player-author {
-    font-size: 11px;
-  }
-
-  .btn {
-    width: 28px;
-    height: 28px;
-  }
-
-  .like-count {
-    font-size: 11px;
-    height: 28px;
-  }
-
-  .player-controls {
-    gap: 6px;
-  }
-}
-
-/* Для очень маленьких экранов */
-@media (max-width: 350px) {
-  .player-title {
-    font-size: 13px;
-  }
-
-  .player-author {
-    font-size: 10px;
-  }
-
-  .custom-player {
-    padding: 8px;
+    white-space: normal;
+    overflow-wrap: break-word;
   }
 }
