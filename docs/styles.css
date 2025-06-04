@@ -6,33 +6,42 @@
   --color-accent: #ff0000;
   --color-secondary: #ccc;
   --color-muted: #aaa;
-  --radius: 16px;
-  --gap: 16px;
+  --radius: 12px;
+  --gap: 8px;
 }
 
 /* === Общие стили === */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
   background: transparent;
   color: var(--color-text);
   font-family: sans-serif;
-  margin: 0;
-  padding: 0;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
 /* === Контейнер плееров === */
 .players-container {
   display: flex;
   justify-content: center;
-  padding: 40px 10px;
-  box-sizing: border-box;
+  padding: 16px 10px;
+  margin: 0 !important;
 }
 
 .player-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: var(--gap);
   width: 100%;
   max-width: 960px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* === Плеер === */
@@ -41,18 +50,18 @@ body {
   align-items: center;
   background: var(--bg-main);
   border-radius: var(--radius);
-  padding: 16px 20px;
+  padding: 12px 16px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-  box-sizing: border-box;
   gap: var(--gap);
+  flex-shrink: 0;
+  width: 100%;
 }
 
 .custom-player img.cover {
-  width: 64px;
-  height: 64px;
-  border-radius: 12px;
+  width: 56px;
+  height: 56px;
+  border-radius: 10px;
   object-fit: cover;
-  flex-shrink: 0;
 }
 
 /* === Информация о треке === */
@@ -63,14 +72,14 @@ body {
 
 .player-title {
   font-weight: bold;
-  font-size: 16px;
+  font-size: 14px;
   color: var(--color-text);
   white-space: normal;
   overflow-wrap: break-word;
 }
 
 .player-author {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--color-secondary);
   margin-top: 2px;
 }
@@ -78,14 +87,15 @@ body {
 /* === Управление === */
 .player-controls {
   display: flex;
-  gap: 12px;
+  align-items: center;
+  gap: 8px;
 }
 
 .btn {
   background: var(--bg-btn);
   border: none;
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   color: #fff;
   display: flex;
@@ -101,38 +111,37 @@ body {
 }
 
 .like-count {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--color-muted);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 36px;
+  min-width: 24px;
+  text-align: center;
+  line-height: 1;
 }
 
 /* === Мобильные устройства === */
 @media (max-width: 768px) {
-  .players-container {
-    padding: 20px;
-  }
-
   .player-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 6px;
+    padding: 0;
   }
 
   .custom-player {
-    flex-direction: row;
-    padding: 12px;
+    padding: 10px;
+    gap: 6px;
   }
 
-  .player-info {
-    width: auto;
-    overflow: visible;
+  .custom-player img.cover {
+    width: 48px;
+    height: 48px;
   }
 
-  .player-title,
-  .player-author {
-    white-space: normal;
-    overflow-wrap: break-word;
+  .btn {
+    width: 28px;
+    height: 28px;
+  }
+
+  .like-count {
+    font-size: 11px;
   }
 }
