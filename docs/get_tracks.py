@@ -1,7 +1,7 @@
 import os
 import json
 
-# Пути к папкам (относительно текущей директории)
+# Пути к папкам
 audio_folder = "docs/audio"
 cover_folder = "docs/covers"
 output_file = "docs/tracks.json"
@@ -11,14 +11,18 @@ tracks = []
 for filename in os.listdir(audio_folder):
     if filename.endswith(".mp3"):
         name = os.path.splitext(filename)[0]
+        cover_found = False
 
-        # Ищем подходящую обложку
-        cover = ""
-        for ext in [".png", ".jpg", ".jpeg", ".PNG", ".JPG"]:
-            candidate = os.path.join(cover_folder, name + ext)
+        for ext in [".png", ".jpg", ".jpeg"]:
+            candidate = os.path.join(cover_folder, f"{name}{ext}")
             if os.path.exists(candidate):
                 cover = f"covers/{name}{ext}"
+                cover_found = True
                 break
+
+        if not cover_found:
+            print(f"[⚠️] Обложка для {filename} не найдена!")
+            continue
 
         track = {
             "title": name,

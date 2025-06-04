@@ -1,9 +1,25 @@
-body {
-  background: transparent;
-  color: #fff;
-  font-family: sans-serif;
+:root {
+  --bg-main: #2d263a;
+  --bg-btn: #3b3644;
+  --bg-btn-hover: #5a4e68;
+  --color-text: #fff;
+  --color-accent: #ff0000;
+  --color-secondary: #ccc;
+  --color-muted: #aaa;
+  --radius: 16px;
+  --gap: 16px;
 }
 
+/* === Общие стили === */
+body {
+  background: transparent;
+  color: var(--color-text);
+  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* === Контейнер плееров === */
 .players-container {
   display: flex;
   justify-content: center;
@@ -14,21 +30,21 @@ body {
 .player-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 20px;
+  gap: var(--gap);
   width: 100%;
   max-width: 960px;
 }
 
+/* === Плеер === */
 .custom-player {
   display: flex;
   align-items: center;
-  background: #2d263a;
-  border-radius: 16px;
+  background: var(--bg-main);
+  border-radius: var(--radius);
   padding: 16px 20px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
   box-sizing: border-box;
-  gap: 16px;
-  width: 100%;
+  gap: var(--gap);
 }
 
 .custom-player img.cover {
@@ -39,6 +55,7 @@ body {
   flex-shrink: 0;
 }
 
+/* === Информация о треке === */
 .player-info {
   flex-grow: 1;
   overflow: hidden;
@@ -47,24 +64,25 @@ body {
 .player-title {
   font-weight: bold;
   font-size: 16px;
-  color: #fff;
+  color: var(--color-text);
   white-space: normal;
   overflow-wrap: break-word;
 }
 
 .player-author {
   font-size: 13px;
-  color: #ccc;
+  color: var(--color-secondary);
   margin-top: 2px;
 }
 
+/* === Управление === */
 .player-controls {
   display: flex;
   gap: 12px;
 }
 
 .btn {
-  background: #3b3644;
+  background: var(--bg-btn);
   border: none;
   width: 36px;
   height: 36px;
@@ -78,20 +96,20 @@ body {
 }
 
 .btn:hover {
-  background: #5a4e68;
+  background: var(--bg-btn-hover);
   transform: scale(1.08);
 }
 
 .like-count {
   font-size: 13px;
-  color: #aaa;
+  color: var(--color-muted);
   display: flex;
   align-items: center;
   justify-content: center;
   height: 36px;
 }
 
-/* Мобильная адаптация */
+/* === Мобильные устройства === */
 @media (max-width: 768px) {
   .players-container {
     padding: 20px;
