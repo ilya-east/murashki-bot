@@ -11,41 +11,21 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
+let tracks = [];
+
 // === Загрузка треков ===
 fetch("tracks.json")
   .then((res) => res.json())
-  .then((tracks) => {
+  .then((data) => {
+    tracks = data;
+
     const container = document.getElementById("players");
 
-    // Создаём дубликат списка треков
-    const tracksDoubled = [...tracks, ...tracks];
+    // Добавляем буферные треки в начало и конец
+    const preBuffer = [...tracks.slice(-4), ...tracks, ...tracks.slice(0, 4)];
 
-    tracksDoubled.forEach((track) => {
-      const wrapper = document.createElement("div");
-      wrapper.className = "custom-player";
-      wrapper.innerHTML = `
-        <img class="cover" src="${track.cover}" alt="cover">
-        <div class="player-info">
-          <div class="player-title">${track.title}</div>
-          <div class="player-author">${track.author}</div>
-        </div>
-        <div class="player-controls">
-          <button class="btn play-btn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>
-          </button>
-          <button class="btn like-btn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff">
-              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 
-                       2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09
-                       C13.09 3.81 14.76 3 16.5 3 
-                       19.58 3 22 5.42 22 8.5
-                       c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-            </svg>
-          </button>
-          <span class="like-count">0</span>
-        </div>
-        <audio src="${track.audio}"></audio>
-      `;
+    preBuffer.forEach((track) => {
+      const wrapper = createTrackElement(track);
       container.appendChild(wrapper);
     });
 
@@ -55,18 +35,40 @@ fetch("tracks.json")
   })
   .catch((err) => console.error("Ошибка загрузки треков:", err));
 
+// === Создаём элемент трека ===
+function createTrackElement(track) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "custom-player";
+  wrapper.innerHTML = `
+    <img class="cover" src="${track.cover}" alt="cover">
+    <div class="player-info">
+      <div class="player-title">${track.title}</div>
+      <div class="player-author">${track.author}</div>
+    </div>
+    <div class="player-controls">
+      <button class="btn play-btn">
+        <svg width="16" height="16" viewBox="0 0 24 22" fill="#fff"><path d="M8 5v14l11-7z"/></svg>
+      </button>
+      <button class="btn like-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff">
+          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 
+                   2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09
+                   C13.09 3.81 14.76 3 16.5 3 
+                   19.58 3 22 5.42 22 8.5
+                   c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+        </svg>
+      </button>
+      <span class="like-count">0</span>
+    </div>
+    <audio src="${track.audio}"></audio>
+  `;
+  return wrapper;
+}
+
 // === Логика проигрывателя ===
 function initPlayerLogic() {
   let currentAudio = null;
   let currentBtn = null;
-
-  // Очищаем старые обработчики событий
-  document.querySelectorAll(".play-btn").forEach(btn => {
-    btn.replaceWith(btn.cloneNode(true));
-  });
-  document.querySelectorAll(".like-btn").forEach(btn => {
-    btn.replaceWith(btn.cloneNode(true));
-  });
 
   document.querySelectorAll(".custom-player").forEach((player) => {
     const audio = player.querySelector("audio");
@@ -131,8 +133,6 @@ function initPlayerLogic() {
 }
 
 // === Бесконечная прокрутка с цикличным перемещением треков ===
-let scrollInterval = null;
-
 function initInfiniteScroll() {
   const container = document.querySelector('.players-container');
   const playerGrid = document.querySelector('.player-grid');
@@ -145,25 +145,37 @@ function initInfiniteScroll() {
   function scrollLoop() {
     container.scrollTop += 1; // Плавная прокрутка
 
+    // Если достигли конца — добавляем новые треки в начало
     if (container.scrollTop + container.clientHeight >= container.scrollHeight - 5) {
-      const firstPlayer = playerGrid.firstElementChild;
-      if (firstPlayer) {
-        playerGrid.appendChild(firstPlayer); // Перемещаем первый трек в конец
-        container.scrollTop = 0;
-        initPlayerLogic(); // Перезапуск логики плеера
-      }
+      const newTracks = tracks.slice(0, 4); // Первые 4 трека
+      newTracks.forEach(track => {
+        const wrapper = createTrackElement(track);
+        playerGrid.prepend(wrapper); // Перемещаем в начало
+      });
+      container.scrollTop -= 4 * 80; // Корректируем прокрутку
+    }
+
+    // Если достигли начала — добавляем треки в конец
+    if (container.scrollTop <= 0) {
+      const newTracks = tracks.slice(-4); // Последние 4 трека
+      newTracks.forEach(track => {
+        const wrapper = createTrackElement(track);
+        playerGrid.appendChild(wrapper); // Перемещаем в конец
+      });
+      container.scrollTop += 4 * 80; // Корректируем прокрутку
     }
 
     requestAnimationFrame(scrollLoop); // Более плавная анимация
   }
 
-  scrollInterval = requestAnimationFrame(scrollLoop);
-
   // Остановка при тапе
   container.addEventListener('touchstart', () => {
     console.log("Прокрутка остановлена");
-    cancelAnimationFrame(scrollInterval); // Останавливаем прокрутку
+    cancelAnimationFrame(scrollLoop);
   });
+
+  // Запуск прокрутки
+  requestAnimationFrame(scrollLoop);
 }
 
 // === Динамическая высота iframe ===
@@ -174,12 +186,6 @@ function resizeIframe() {
 
 window.addEventListener('load', () => {
   resizeIframe();
-  initPlayerLogic();
-
-  // Немного задерживаем прокрутку, чтобы всё успело загрузиться
-  setTimeout(() => {
-    initInfiniteScroll();
-  }, 1000);
 });
 
 window.addEventListener('resize', resizeIframe);

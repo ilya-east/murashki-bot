@@ -28,7 +28,7 @@ body {
   height: 400px; /* Фиксированная высота для прокрутки */
   -webkit-overflow-scrolling: touch; /* Для iOS */
   position: relative;
-  transition: all 0.2s ease; /* Плавная анимация при изменении высоты */
+  scroll-behavior: auto;
 }
 
 /* === Грид с плеерами === */
@@ -50,7 +50,7 @@ body {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
   box-sizing: border-box;
   gap: var(--gap);
-  transition: transform 0.2s ease; /* Плавная анимация при перемещении */
+  transition: transform 0.2s ease; /* Плавное перемещение при прокрутке */
 }
 
 /* === Обложка === */
