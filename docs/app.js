@@ -70,7 +70,7 @@ function initPlayerLogic() {
   let currentAudio = null;
   let currentBtn = null;
 
-  // Удаляем старые кнопки, чтобы избежать дублирования обработчиков
+  // Удаляем старые кнопки, чтобы не было дублирования событий
   document.querySelectorAll(".play-btn").forEach(btn => {
     btn.replaceWith(btn.cloneNode(true));
   });
@@ -140,7 +140,7 @@ function initPlayerLogic() {
   });
 }
 
-// === Бесконечная прокрутка с "незаметным" перемещением треков ===
+// === Бесконечная прокрутка с незаметным перемещением треков ===
 function initInfiniteScroll() {
   const container = document.querySelector('.players-container');
   const playerGrid = document.querySelector('.player-grid');
@@ -160,12 +160,11 @@ function initInfiniteScroll() {
       if (container.scrollTop > (container.scrollHeight - container.clientHeight) * 0.7) {
         const firstPlayer = playerGrid.firstElementChild;
         if (firstPlayer) {
-          firstPlayer.style.opacity = '0'; // Скрываем элемент перед перемещением
+          firstPlayer.style.opacity = '0'; // Плавное исчезновение
           setTimeout(() => {
             playerGrid.appendChild(firstPlayer);
-            container.scrollTop = 0; // Под капотом перестраиваем список
-            firstPlayer.style.opacity = '1';
-            initPlayerLogic(); // Обновляем логику
+            firstPlayer.style.opacity = '1'; // Плавное появление
+            initPlayerLogic(); // Обновляем логику после перемещения
           }, 150);
         }
       }
@@ -196,3 +195,21 @@ function initInfiniteScroll() {
   // Запуск прокрутки
   requestAnimationFrame(scrollLoop);
 }
+
+// === Динамическая высота iframe ===
+function resizeIframe() {
+  const height = document.body.scrollHeight;
+  window.parent.postMessage({ type: 'resize', height }, '*');
+}
+
+window.addEventListener('load', () => {
+  resizeIframe();
+  initPlayerLogic();
+
+  // Небольшая задержка для стабильной отрисовки
+  setTimeout(() => {
+    initInfiniteScroll();
+  }, 1000);
+});
+
+window.addEventListener('resize', resizeIframe);
