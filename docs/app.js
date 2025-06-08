@@ -131,12 +131,11 @@ function initInfiniteScroll() {
   }
 
   let scrollPos = 0;
-  let speed = 1; // Скорость прокрутки (можно регулировать)
 
   function smoothScroll() {
     container.scrollTop = scrollPos++;
-    
-    // Когда достигли конца — перематываем к началу без скачка
+
+    // Если дошли до конца — начать сначала
     if (scrollPos >= container.scrollHeight - container.clientHeight) {
       scrollPos = 0;
     }
@@ -144,17 +143,16 @@ function initInfiniteScroll() {
     requestAnimationFrame(smoothScroll);
   }
 
-  // Запуск прокрутки
   requestAnimationFrame(smoothScroll);
 
-  // Остановка при клике/тапе
+  // Остановка по клику/тапу
   container.addEventListener('click', () => {
     cancelAnimationFrame(scrollPos);
     console.log("Прокрутка остановлена");
   });
 }
 
-// === Запуск прокрутки после загрузки ===
+// === Запуск после загрузки ===
 window.addEventListener('load', () => {
   initInfiniteScroll();
 });

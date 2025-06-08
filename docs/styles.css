@@ -28,8 +28,6 @@ body {
   height: 400px; /* Фиксированная высота для прокрутки */
   -webkit-overflow-scrolling: touch; /* Для iOS */
   position: relative;
-  scroll-behavior: auto; /* Позволяет управлять скроллом через JS */
-  will-change: scroll-position; /* Улучшает производительность при анимации скролла */
 }
 
 /* === Грид с плеерами === */
