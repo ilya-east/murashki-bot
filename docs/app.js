@@ -36,8 +36,7 @@ function createTrackElement(track) {
   const wrapper = document.createElement("div");
   wrapper.className = "custom-player";
   wrapper.setAttribute("data-track-id", track.audio); // Для идентификации
-  wrapper.style.opacity = 0;
-  setTimeout(() => wrapper.style.opacity = 1, 10); // Плавное появление
+  wrapper.style.opacity = '1';
 
   wrapper.innerHTML = `
     <img class="cover" src="${track.cover}" alt="cover">
@@ -70,7 +69,7 @@ function initPlayerLogic() {
   let currentAudio = null;
   let currentBtn = null;
 
-  // Удаляем старые кнопки, чтобы не было дублирования событий
+  // Удаляем старые обработчики событий
   document.querySelectorAll(".play-btn").forEach(btn => {
     btn.replaceWith(btn.cloneNode(true));
   });
@@ -140,7 +139,7 @@ function initPlayerLogic() {
   });
 }
 
-// === Бесконечная прокрутка через transformY и 50% ===
+// === Бесконечная прокрутка с перемещением трека после 50% ===
 function initInfiniteScroll() {
   const container = document.querySelector('.players-container');
   const playerGrid = document.querySelector('.player-grid');
@@ -150,29 +149,19 @@ function initInfiniteScroll() {
     return;
   }
 
-  let scrollOffset = 0;
   let isPaused = false;
 
   function scrollLoop() {
     if (!isPaused) {
-      scrollOffset += 1;
+      container.scrollTop += 1;
 
-      // Прокручиваем через transform
-      playerGrid.style.transform = `translateY(-${scrollOffset}px)`;
-
-      // На середине списка — перемещаем первый элемент в конец
-      const trackHeight = 80; // Высота одного трека с отступами
-      if (scrollOffset >= trackHeight * 2) { // 50%
+      // Если прошли ~50% высоты контейнера — перемещаем первый трек в конец
+      if (container.scrollTop >= container.scrollHeight / 2) {
         const firstPlayer = playerGrid.firstElementChild;
         if (firstPlayer) {
-          firstPlayer.style.opacity = '0';
-          setTimeout(() => {
-            playerGrid.appendChild(firstPlayer); // Перемещаем в конец
-            scrollOffset -= trackHeight; // Корректируем offset
-            playerGrid.style.transform = `translateY(-${scrollOffset}px)`; // Новая позиция
-            firstPlayer.style.opacity = '1';
-            initPlayerLogic(); // Обновляем логику
-          }, 150);
+          playerGrid.appendChild(firstPlayer);
+          container.scrollTop = 0; // Сбрасываем наверх, чтобы продолжить прокрутку
+          initPlayerLogic(); // Обновляем события
         }
       }
     }
@@ -183,19 +172,15 @@ function initInfiniteScroll() {
   // Остановка при тапе/клике
   container.addEventListener('click', () => {
     isPaused = true;
-    console.log("Прокрутка остановлена");
     setTimeout(() => {
       isPaused = false;
-      console.log("Прокрутка возобновлена");
     }, 5000);
   });
 
   container.addEventListener('touchstart', () => {
     isPaused = true;
-    console.log("Прокрутка остановлена");
     setTimeout(() => {
       isPaused = false;
-      console.log("Прокрутка возобновлена");
     }, 5000);
   });
 

@@ -24,21 +24,20 @@ body {
   display: flex;
   justify-content: center;
   padding: 16px 12px;
-  overflow: hidden; /* 🔥 Важно! Чтобы не было рывков при циклической прокрутке */
-  height: 400px; /* Фиксированная высота для прокрутки */
+  overflow-y: auto;
+  height: 400px;
+  -webkit-overflow-scrolling: touch;
   position: relative;
   scroll-behavior: auto;
 }
 
-/* === Грид с плеерами (теперь flex-колонка) === */
+/* === Грид с плеерами === */
 .player-grid {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: var(--gap);
   width: 100%;
   max-width: 960px;
-  will-change: transform; /* Для оптимизации GPU */
-  transition: transform 0.1s linear; /* Плавная прокрутка через translate */
 }
 
 /* === Плеер === */
@@ -51,7 +50,6 @@ body {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
   box-sizing: border-box;
   gap: var(--gap);
-  transition: opacity 0.2s ease; /* Плавное появление/исчезновение */
 }
 
 /* === Обложка === */
@@ -121,6 +119,7 @@ body {
   }
 
   .player-grid {
+    grid-template-columns: 1fr;
     gap: 10px;
   }
 
