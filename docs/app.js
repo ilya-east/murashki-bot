@@ -17,7 +17,10 @@ fetch("tracks.json")
   .then((tracks) => {
     const container = document.getElementById("players");
 
-    tracks.forEach((track) => {
+    // Создаём дубликат списка треков
+    const tracksDoubled = [...tracks, ...tracks];
+
+    tracksDoubled.forEach((track) => {
       const wrapper = document.createElement("div");
       wrapper.className = "custom-player";
       wrapper.innerHTML = `
