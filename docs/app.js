@@ -122,8 +122,10 @@ function initPlayerLogic() {
   window.addEventListener('resize', resizeIframe);
 }
 
-// === Бесконечная плавная прокрутка ===
-function initInfiniteScroll() {
+// === Автоматическая прокрутка ===
+let autoScrollInterval = null;
+
+function initAutoScroll() {
   const container = document.querySelector('.players-container');
   if (!container || container.scrollHeight <= container.clientHeight) {
     console.log("Прокрутка не нужна");
@@ -132,27 +134,23 @@ function initInfiniteScroll() {
 
   let scrollPos = 0;
 
-  function smoothScroll() {
+  autoScrollInterval = setInterval(() => {
     container.scrollTop = scrollPos++;
-
-    // Если дошли до конца — начать сначала
     if (scrollPos >= container.scrollHeight - container.clientHeight) {
       scrollPos = 0;
     }
-
-    requestAnimationFrame(smoothScroll);
-  }
-
-  requestAnimationFrame(smoothScroll);
-
-  // Остановка по клику/тапу
-  container.addEventListener('click', () => {
-    cancelAnimationFrame(scrollPos);
-    console.log("Прокрутка остановлена");
-  });
+  }, 50); // Скорость прокрутки
 }
 
-// === Запуск после загрузки ===
+// === Остановка при клике/тапе ===
 window.addEventListener('load', () => {
-  initInfiniteScroll();
+  const container = document.querySelector('.players-container');
+  if (!container) return;
+
+  container.addEventListener('click', () => {
+    if (autoScrollInterval) {
+      clearInterval(autoScrollInterval);
+      console.log("Прокрутка остановлена");
+    }
+  });
 });
