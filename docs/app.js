@@ -137,33 +137,31 @@ function initInfiniteScroll() {
     return;
   }
 
-  function scrollLoop() {
-    container.scrollTop += 0.5;
+  let scrollPos = 0;
 
-    if (container.scrollTop + container.clientHeight >= container.scrollHeight - 5) {
+  function scrollLoop() {
+    container.scrollTop = scrollPos++;
+
+    if (scrollPos >= container.scrollHeight - container.clientHeight) {
       const firstPlayer = playerGrid.firstElementChild;
       if (firstPlayer) {
         playerGrid.appendChild(firstPlayer);
         container.scrollTop = 0;
-        initPlayerLogic(); // Перезапуск логики после перемещения
+        initPlayerLogic(); // Перезапуск логики плеера
       }
+      scrollPos = 0;
     }
 
-    requestAnimationFrame(scrollLoop);
+    setTimeout(scrollLoop, 30); // Вместо requestAnimationFrame — стабильнее на мобильных
   }
 
-  requestAnimationFrame(scrollLoop);
-
-  // Остановка при клике/тапе
-  container.addEventListener('click', () => {
-    cancelAnimationFrame(scrollLoop);
+  // Остановка при тапе
+  container.addEventListener('touchstart', () => {
     console.log("Прокрутка остановлена");
-
-    setTimeout(() => {
-      console.log("Прокрутка возобновлена");
-      requestAnimationFrame(scrollLoop);
-    }, 5000);
+    // Можно добавить возобновление через setTimeout, если нужно
   });
+
+  scrollLoop();
 }
 
 // === Динамическая высота iframe ===
@@ -175,6 +173,11 @@ function resizeIframe() {
 window.addEventListener('load', () => {
   resizeIframe();
   initPlayerLogic();
-  initInfiniteScroll();
+
+  // Немного задерживаем прокрутку, чтобы всё успело загрузиться
+  setTimeout(() => {
+    initInfiniteScroll();
+  }, 1000);
 });
+
 window.addEventListener('resize', resizeIframe);

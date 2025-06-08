@@ -24,10 +24,11 @@ body {
   display: flex;
   justify-content: center;
   padding: 16px 12px;
-  overflow-y: auto;
-  height: 400px;
-  -webkit-overflow-scrolling: touch;
+  overflow-y: auto; /* Включаем вертикальный скролл */
+  height: 400px; /* Фиксированная высота для прокрутки */
+  -webkit-overflow-scrolling: touch; /* Для плавности на iOS */
   position: relative;
+  scroll-behavior: auto; /* Чтобы не мешал JS-скроллу */
 }
 
 /* === Грид с плеерами === */
