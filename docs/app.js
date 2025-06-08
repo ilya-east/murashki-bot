@@ -36,7 +36,6 @@ function createTrackElement(track) {
   const wrapper = document.createElement("div");
   wrapper.className = "custom-player";
   wrapper.setAttribute("data-track-id", track.audio); // Для идентификации
-  wrapper.style.opacity = '1';
 
   wrapper.innerHTML = `
     <img class="cover" src="${track.cover}" alt="cover">
@@ -69,7 +68,7 @@ function initPlayerLogic() {
   let currentAudio = null;
   let currentBtn = null;
 
-  // Удаляем старые обработчики событий
+  // Очищаем старые обработчики событий
   document.querySelectorAll(".play-btn").forEach(btn => {
     btn.replaceWith(btn.cloneNode(true));
   });
@@ -139,7 +138,7 @@ function initPlayerLogic() {
   });
 }
 
-// === Бесконечная прокрутка с перемещением трека после 50% ===
+// === Бесконечная прокрутка без рывков ===
 function initInfiniteScroll() {
   const container = document.querySelector('.players-container');
   const playerGrid = document.querySelector('.player-grid');
@@ -150,18 +149,19 @@ function initInfiniteScroll() {
   }
 
   let isPaused = false;
+  const trackHeight = 80; // Высота одного трека с отступами
 
   function scrollLoop() {
     if (!isPaused) {
       container.scrollTop += 1;
 
-      // Если прошли ~50% высоты контейнера — перемещаем первый трек в конец
-      if (container.scrollTop >= container.scrollHeight / 2) {
+      // Когда прошли ~50% — перемещаем первый трек в конец
+      if (container.scrollTop >= trackHeight * 2) {
         const firstPlayer = playerGrid.firstElementChild;
         if (firstPlayer) {
-          playerGrid.appendChild(firstPlayer);
-          container.scrollTop = 0; // Сбрасываем наверх, чтобы продолжить прокрутку
-          initPlayerLogic(); // Обновляем события
+          playerGrid.appendChild(firstPlayer); // Перемещаем в конец
+          container.scrollTop -= trackHeight; // Корректируем позицию (не до нуля!)
+          initPlayerLogic(); // Перепривязываем логику
         }
       }
     }
@@ -169,18 +169,24 @@ function initInfiniteScroll() {
     requestAnimationFrame(scrollLoop);
   }
 
-  // Остановка при тапе/клике
+  // Остановка при клике/тапе
   container.addEventListener('click', () => {
     isPaused = true;
+    console.log("Прокрутка остановлена");
     setTimeout(() => {
       isPaused = false;
+      console.log("Прокрутка возобновлена");
+      requestAnimationFrame(scrollLoop);
     }, 5000);
   });
 
   container.addEventListener('touchstart', () => {
     isPaused = true;
+    console.log("Прокрутка остановлена");
     setTimeout(() => {
       isPaused = false;
+      console.log("Прокрутка возобновлена");
+      requestAnimationFrame(scrollLoop);
     }, 5000);
   });
 
