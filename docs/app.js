@@ -122,33 +122,46 @@ function initPlayerLogic() {
   window.addEventListener('resize', resizeIframe);
 }
 
-// === Бесконечная плавная прокрутка ===
+// === Бесконечная прокрутка с "цикличным" перемещением треков ===
 function initInfiniteScroll() {
   const container = document.querySelector('.players-container');
-  if (!container || container.scrollHeight <= container.clientHeight) {
+  const playerGrid = document.querySelector('.player-grid');
+
+  if (!container || !playerGrid || container.scrollHeight <= container.clientHeight) {
     console.log("Прокрутка не нужна");
     return;
   }
 
-  let scrollPos = 0;
+  let ticking = false;
 
-  function smoothScroll() {
-    container.scrollTop = scrollPos++;
+  function scrollLoop() {
+    container.scrollTop += 0.5;
 
-    // Если дошли до конца — начать сначала
-    if (scrollPos >= container.scrollHeight - container.clientHeight) {
-      scrollPos = 0;
+    // Если достигли конца — перемещаем первый трек в конец
+    if (container.scrollTop + container.clientHeight >= container.scrollHeight - 5) {
+      const firstPlayer = playerGrid.firstElementChild;
+      if (firstPlayer) {
+        playerGrid.appendChild(firstPlayer); // Перемещаем первый трек в конец
+        container.scrollTop = 0; // Сбрасываем прокрутку, чтобы продолжить
+      }
     }
 
-    requestAnimationFrame(smoothScroll);
+    requestAnimationFrame(scrollLoop);
   }
 
-  requestAnimationFrame(smoothScroll);
+  // Запуск прокрутки
+  requestAnimationFrame(scrollLoop);
 
-  // Остановка по клику/тапу
+  // Остановка по тапу/клику
   container.addEventListener('click', () => {
-    cancelAnimationFrame(scrollPos);
+    cancelAnimationFrame(scrollLoop);
     console.log("Прокрутка остановлена");
+
+    // Возобновление через 5 секунд
+    setTimeout(() => {
+      console.log("Прокрутка возобновлена");
+      requestAnimationFrame(scrollLoop);
+    }, 5000);
   });
 }
 
