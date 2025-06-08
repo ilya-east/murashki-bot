@@ -21,9 +21,7 @@ fetch("tracks.json")
 
     const container = document.getElementById("players");
 
-    // Инициализируем список с буфером
-    const initialTracks = [...tracks.slice(-4), ...tracks, ...tracks.slice(0, 4)];
-    initialTracks.forEach(track => {
+    tracks.forEach(track => {
       const wrapper = createTrackElement(track);
       container.appendChild(wrapper);
     });
@@ -64,7 +62,7 @@ function createTrackElement(track) {
   return wrapper;
 }
 
-// === Логика проигрывателя и лайков ===
+// === Логика проигрывателя ===
 function initPlayerLogic() {
   let currentAudio = null;
   let currentBtn = null;
@@ -131,7 +129,7 @@ function initPlayerLogic() {
   });
 }
 
-// === Бесконечная прокрутка с буферной зоной ===
+// === Бесконечная прокрутка через перемещение первого элемента в конец ===
 function initInfiniteScroll() {
   const container = document.querySelector('.players-container');
   const playerGrid = document.querySelector('.player-grid');
@@ -142,40 +140,16 @@ function initInfiniteScroll() {
   }
 
   function scrollLoop() {
-    container.scrollTop += 1;
+    container.scrollTop += 1; // Прокручиваем вниз
 
-    // Если почти достигли конца — добавляем новые в начало и удаляем лишние в конце
-    if (container.scrollTop + container.clientHeight >= container.scrollHeight - 100) {
-      const newTracks = tracks.slice(0, 4); // Первые 4 трека
-      newTracks.forEach(track => {
-        const wrapper = createTrackElement(track);
-        playerGrid.prepend(wrapper); // Добавляем в начало
-      });
-
-      // Удаляем последние 4 трека
-      for (let i = 0; i < 4; i++) {
-        const last = playerGrid.lastElementChild;
-        if (last) last.remove();
+    // Если почти достигли конца — перемещаем первый элемент в конец
+    if (container.scrollTop + container.clientHeight >= container.scrollHeight - 5) {
+      const firstPlayer = playerGrid.firstElementChild;
+      if (firstPlayer) {
+        playerGrid.appendChild(firstPlayer); // Перемещаем в конец
+        container.scrollTop = 0; // Начинаем заново
+        initPlayerLogic(); // Перезапуск логики
       }
-
-      container.scrollTop -= 4 * 80; // Корректируем позицию, чтобы пользователь не заметил перехода
-    }
-
-    // Если почти в начале — добавляем в конец и удаляем из начала
-    if (container.scrollTop <= 100) {
-      const newTracks = tracks.slice(-4); // Последние 4 трека
-      newTracks.forEach(track => {
-        const wrapper = createTrackElement(track);
-        playerGrid.appendChild(wrapper); // Добавляем в конец
-      });
-
-      // Удаляем первые 4 трека
-      for (let i = 0; i < 4; i++) {
-        const first = playerGrid.firstElementChild;
-        if (first) first.remove();
-      }
-
-      container.scrollTop += 4 * 80; // Коррекция для плавности
     }
 
     requestAnimationFrame(scrollLoop);
@@ -183,8 +157,15 @@ function initInfiniteScroll() {
 
   // Остановка при тапе
   container.addEventListener('touchstart', () => {
-    console.log("Прокрутка остановлена");
     cancelAnimationFrame(scrollLoop);
+    console.log("Прокрутка остановлена");
+  });
+
+  // Возобновление через 5 секунд после остановки (опционально)
+  container.addEventListener('touchend', () => {
+    setTimeout(() => {
+      requestAnimationFrame(scrollLoop);
+    }, 5000);
   });
 
   // Запуск прокрутки
@@ -199,5 +180,12 @@ function resizeIframe() {
 
 window.addEventListener('load', () => {
   resizeIframe();
+  initPlayerLogic();
+
+  // Немного задерживаем прокрутку, чтобы всё успело отрендериться
+  setTimeout(() => {
+    initInfiniteScroll();
+  }, 1000);
 });
+
 window.addEventListener('resize', resizeIframe);
