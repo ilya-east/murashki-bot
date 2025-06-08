@@ -21,17 +21,15 @@ fetch("tracks.json")
 
     const container = document.getElementById("players");
 
-    // Добавляем буферные треки в начало и конец
-    const preBuffer = [...tracks.slice(-4), ...tracks, ...tracks.slice(0, 4)];
-
-    preBuffer.forEach((track) => {
+    // Инициализируем список с буфером
+    const initialTracks = [...tracks.slice(-4), ...tracks, ...tracks.slice(0, 4)];
+    initialTracks.forEach(track => {
       const wrapper = createTrackElement(track);
       container.appendChild(wrapper);
     });
 
-    // Инициализируем всё после загрузки
     initPlayerLogic();
-    initInfiniteScroll(); // Бесконечная прокрутка
+    initInfiniteScroll();
   })
   .catch((err) => console.error("Ошибка загрузки треков:", err));
 
@@ -39,6 +37,7 @@ fetch("tracks.json")
 function createTrackElement(track) {
   const wrapper = document.createElement("div");
   wrapper.className = "custom-player";
+  wrapper.setAttribute("data-track-id", track.audio); // Для идентификации
   wrapper.innerHTML = `
     <img class="cover" src="${track.cover}" alt="cover">
     <div class="player-info">
@@ -47,7 +46,7 @@ function createTrackElement(track) {
     </div>
     <div class="player-controls">
       <button class="btn play-btn">
-        <svg width="16" height="16" viewBox="0 0 24 22" fill="#fff"><path d="M8 5v14l11-7z"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>
       </button>
       <button class="btn like-btn">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff">
@@ -65,7 +64,7 @@ function createTrackElement(track) {
   return wrapper;
 }
 
-// === Логика проигрывателя ===
+// === Логика проигрывателя и лайков ===
 function initPlayerLogic() {
   let currentAudio = null;
   let currentBtn = null;
@@ -132,7 +131,7 @@ function initPlayerLogic() {
   });
 }
 
-// === Бесконечная прокрутка с цикличным перемещением треков ===
+// === Бесконечная прокрутка с буферной зоной ===
 function initInfiniteScroll() {
   const container = document.querySelector('.players-container');
   const playerGrid = document.querySelector('.player-grid');
@@ -143,29 +142,43 @@ function initInfiniteScroll() {
   }
 
   function scrollLoop() {
-    container.scrollTop += 1; // Плавная прокрутка
+    container.scrollTop += 1;
 
-    // Если достигли конца — добавляем новые треки в начало
-    if (container.scrollTop + container.clientHeight >= container.scrollHeight - 5) {
+    // Если почти достигли конца — добавляем новые в начало и удаляем лишние в конце
+    if (container.scrollTop + container.clientHeight >= container.scrollHeight - 100) {
       const newTracks = tracks.slice(0, 4); // Первые 4 трека
       newTracks.forEach(track => {
         const wrapper = createTrackElement(track);
-        playerGrid.prepend(wrapper); // Перемещаем в начало
+        playerGrid.prepend(wrapper); // Добавляем в начало
       });
-      container.scrollTop -= 4 * 80; // Корректируем прокрутку
+
+      // Удаляем последние 4 трека
+      for (let i = 0; i < 4; i++) {
+        const last = playerGrid.lastElementChild;
+        if (last) last.remove();
+      }
+
+      container.scrollTop -= 4 * 80; // Корректируем позицию, чтобы пользователь не заметил перехода
     }
 
-    // Если достигли начала — добавляем треки в конец
-    if (container.scrollTop <= 0) {
+    // Если почти в начале — добавляем в конец и удаляем из начала
+    if (container.scrollTop <= 100) {
       const newTracks = tracks.slice(-4); // Последние 4 трека
       newTracks.forEach(track => {
         const wrapper = createTrackElement(track);
-        playerGrid.appendChild(wrapper); // Перемещаем в конец
+        playerGrid.appendChild(wrapper); // Добавляем в конец
       });
-      container.scrollTop += 4 * 80; // Корректируем прокрутку
+
+      // Удаляем первые 4 трека
+      for (let i = 0; i < 4; i++) {
+        const first = playerGrid.firstElementChild;
+        if (first) first.remove();
+      }
+
+      container.scrollTop += 4 * 80; // Коррекция для плавности
     }
 
-    requestAnimationFrame(scrollLoop); // Более плавная анимация
+    requestAnimationFrame(scrollLoop);
   }
 
   // Остановка при тапе
@@ -187,5 +200,4 @@ function resizeIframe() {
 window.addEventListener('load', () => {
   resizeIframe();
 });
-
 window.addEventListener('resize', resizeIframe);
