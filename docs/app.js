@@ -67,6 +67,14 @@ function initPlayerLogic() {
   let currentAudio = null;
   let currentBtn = null;
 
+  // Удаляем старые кнопки, чтобы не было дублирования событий
+  document.querySelectorAll(".play-btn").forEach(btn => {
+    btn.replaceWith(btn.cloneNode(true));
+  });
+  document.querySelectorAll(".like-btn").forEach(btn => {
+    btn.replaceWith(btn.cloneNode(true));
+  });
+
   document.querySelectorAll(".custom-player").forEach((player) => {
     const audio = player.querySelector("audio");
     const playBtn = player.querySelector(".play-btn");
@@ -129,7 +137,7 @@ function initPlayerLogic() {
   });
 }
 
-// === Бесконечная прокрутка через перемещение первого элемента в конец ===
+// === Бесконечная прокрутка с перемещением первого элемента в конец ===
 function initInfiniteScroll() {
   const container = document.querySelector('.players-container');
   const playerGrid = document.querySelector('.player-grid');
@@ -140,15 +148,15 @@ function initInfiniteScroll() {
   }
 
   function scrollLoop() {
-    container.scrollTop += 1; // Прокручиваем вниз
+    container.scrollTop += 1;
 
-    // Если почти достигли конца — перемещаем первый элемент в конец
-    if (container.scrollTop + container.clientHeight >= container.scrollHeight - 5) {
+    // Перемещаем, когда пользователь прошёл ~70% списка
+    if (container.scrollTop > (container.scrollHeight - container.clientHeight) * 0.7) {
       const firstPlayer = playerGrid.firstElementChild;
       if (firstPlayer) {
         playerGrid.appendChild(firstPlayer); // Перемещаем в конец
-        container.scrollTop = 0; // Начинаем заново
-        initPlayerLogic(); // Перезапуск логики
+        container.scrollTop -= playerGrid.firstElementChild.offsetHeight; // Коррекция скролла
+        initPlayerLogic(); // Обновляем логику после перемещения
       }
     }
 
@@ -161,7 +169,7 @@ function initInfiniteScroll() {
     console.log("Прокрутка остановлена");
   });
 
-  // Возобновление через 5 секунд после остановки (опционально)
+  // Возобновление через 5 секунд (опционально)
   container.addEventListener('touchend', () => {
     setTimeout(() => {
       requestAnimationFrame(scrollLoop);
@@ -182,7 +190,7 @@ window.addEventListener('load', () => {
   resizeIframe();
   initPlayerLogic();
 
-  // Немного задерживаем прокрутку, чтобы всё успело отрендериться
+  // Небольшая задержка для стабильности отрисовки
   setTimeout(() => {
     initInfiniteScroll();
   }, 1000);
