@@ -42,7 +42,7 @@ fetch("tracks.json")
 
     // === После загрузки всех треков — инициализируем логику плеера и прокрутки ===
     initPlayerLogic();
-    initAutoScroll(); // Запуск автопрокрутки
+    initInfiniteScroll(); // Запуск бесконечной прокрутки
   })
   .catch((err) => console.error("Ошибка загрузки треков:", err));
 
@@ -50,6 +50,14 @@ fetch("tracks.json")
 function initPlayerLogic() {
   let currentAudio = null;
   let currentBtn = null;
+
+  // Удаляем старые обработчики, чтобы избежать дублирования
+  document.querySelectorAll(".play-btn").forEach(btn => {
+    btn.replaceWith(btn.cloneNode(true));
+  });
+  document.querySelectorAll(".like-btn").forEach(btn => {
+    btn.replaceWith(btn.cloneNode(true));
+  });
 
   document.querySelectorAll(".custom-player").forEach((player) => {
     const audio = player.querySelector("audio");
@@ -111,18 +119,9 @@ function initPlayerLogic() {
       });
     });
   });
-
-  // Динамическая высота iframe
-  function resizeIframe() {
-    const height = document.body.scrollHeight;
-    window.parent.postMessage({ type: 'resize', height }, '*');
-  }
-
-  window.addEventListener('load', resizeIframe);
-  window.addEventListener('resize', resizeIframe);
 }
 
-// === Бесконечная прокрутка с "цикличным" перемещением треков ===
+// === Бесконечная прокрутка с цикличным перемещением треков ===
 function initInfiniteScroll() {
   const container = document.querySelector('.players-container');
   const playerGrid = document.querySelector('.player-grid');
@@ -132,17 +131,16 @@ function initInfiniteScroll() {
     return;
   }
 
-  let ticking = false;
-
   function scrollLoop() {
-    container.scrollTop += 0.5;
+    container.scrollTop += 0.5; // Плавная прокрутка
 
     // Если достигли конца — перемещаем первый трек в конец
     if (container.scrollTop + container.clientHeight >= container.scrollHeight - 5) {
       const firstPlayer = playerGrid.firstElementChild;
       if (firstPlayer) {
         playerGrid.appendChild(firstPlayer); // Перемещаем первый трек в конец
-        container.scrollTop = 0; // Сбрасываем прокрутку, чтобы продолжить
+        container.scrollTop = 0; // Сбрасываем прокрутку
+        initPlayerLogic(); // Перезапускаем логику плеера
       }
     }
 
@@ -165,7 +163,15 @@ function initInfiniteScroll() {
   });
 }
 
-// === Запуск после загрузки ===
+// === Динамическая высота iframe ===
+function resizeIframe() {
+  const height = document.body.scrollHeight;
+  window.parent.postMessage({ type: 'resize', height }, '*');
+}
+
 window.addEventListener('load', () => {
+  resizeIframe();
+  initPlayerLogic();
   initInfiniteScroll();
 });
+window.addEventListener('resize', resizeIframe);
