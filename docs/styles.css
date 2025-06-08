@@ -26,9 +26,9 @@ body {
   padding: 16px 12px;
   overflow-y: auto; /* Включаем вертикальный скролл */
   height: 400px; /* Фиксированная высота для прокрутки */
-  -webkit-overflow-scrolling: touch; /* Для плавности на iOS */
+  -webkit-overflow-scrolling: touch; /* Для iOS */
   position: relative;
-  scroll-behavior: auto; /* Чтобы не мешал JS-скроллу */
+  transition: all 0.2s ease; /* Плавная анимация при изменении высоты */
 }
 
 /* === Грид с плеерами === */
@@ -50,6 +50,7 @@ body {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
   box-sizing: border-box;
   gap: var(--gap);
+  transition: transform 0.2s ease; /* Плавная анимация при перемещении */
 }
 
 /* === Обложка === */

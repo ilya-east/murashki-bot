@@ -128,6 +128,8 @@ function initPlayerLogic() {
 }
 
 // === Бесконечная прокрутка с цикличным перемещением треков ===
+let scrollInterval = null;
+
 function initInfiniteScroll() {
   const container = document.querySelector('.players-container');
   const playerGrid = document.querySelector('.player-grid');
@@ -137,31 +139,28 @@ function initInfiniteScroll() {
     return;
   }
 
-  let scrollPos = 0;
-
   function scrollLoop() {
-    container.scrollTop = scrollPos++;
+    container.scrollTop += 1; // Плавная прокрутка
 
-    if (scrollPos >= container.scrollHeight - container.clientHeight) {
+    if (container.scrollTop + container.clientHeight >= container.scrollHeight - 5) {
       const firstPlayer = playerGrid.firstElementChild;
       if (firstPlayer) {
-        playerGrid.appendChild(firstPlayer);
+        playerGrid.appendChild(firstPlayer); // Перемещаем первый трек в конец
         container.scrollTop = 0;
         initPlayerLogic(); // Перезапуск логики плеера
       }
-      scrollPos = 0;
     }
 
-    setTimeout(scrollLoop, 30); // Вместо requestAnimationFrame — стабильнее на мобильных
+    requestAnimationFrame(scrollLoop); // Более плавная анимация
   }
+
+  scrollInterval = requestAnimationFrame(scrollLoop);
 
   // Остановка при тапе
   container.addEventListener('touchstart', () => {
     console.log("Прокрутка остановлена");
-    // Можно добавить возобновление через setTimeout, если нужно
+    cancelAnimationFrame(scrollInterval); // Останавливаем прокрутку
   });
-
-  scrollLoop();
 }
 
 // === Динамическая высота iframe ===
