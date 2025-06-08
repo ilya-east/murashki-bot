@@ -31,7 +31,13 @@ fetch("tracks.json")
             <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>
           </button>
           <button class="btn like-btn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 
+                       2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09
+                       C13.09 3.81 14.76 3 16.5 3 
+                       19.58 3 22 5.42 22 8.5
+                       c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
           </button>
           <span class="like-count">0</span>
         </div>
@@ -40,9 +46,9 @@ fetch("tracks.json")
       container.appendChild(wrapper);
     });
 
-    // === После загрузки всех треков — инициализируем логику плеера и прокрутки ===
+    // Инициализируем всё после загрузки
     initPlayerLogic();
-    initInfiniteScroll(); // Запуск бесконечной прокрутки
+    initInfiniteScroll(); // Бесконечная прокрутка
   })
   .catch((err) => console.error("Ошибка загрузки треков:", err));
 
@@ -51,7 +57,7 @@ function initPlayerLogic() {
   let currentAudio = null;
   let currentBtn = null;
 
-  // Удаляем старые обработчики, чтобы избежать дублирования
+  // Очищаем старые обработчики событий
   document.querySelectorAll(".play-btn").forEach(btn => {
     btn.replaceWith(btn.cloneNode(true));
   });
@@ -132,30 +138,27 @@ function initInfiniteScroll() {
   }
 
   function scrollLoop() {
-    container.scrollTop += 0.5; // Плавная прокрутка
+    container.scrollTop += 0.5;
 
-    // Если достигли конца — перемещаем первый трек в конец
     if (container.scrollTop + container.clientHeight >= container.scrollHeight - 5) {
       const firstPlayer = playerGrid.firstElementChild;
       if (firstPlayer) {
-        playerGrid.appendChild(firstPlayer); // Перемещаем первый трек в конец
-        container.scrollTop = 0; // Сбрасываем прокрутку
-        initPlayerLogic(); // Перезапускаем логику плеера
+        playerGrid.appendChild(firstPlayer);
+        container.scrollTop = 0;
+        initPlayerLogic(); // Перезапуск логики после перемещения
       }
     }
 
     requestAnimationFrame(scrollLoop);
   }
 
-  // Запуск прокрутки
   requestAnimationFrame(scrollLoop);
 
-  // Остановка по тапу/клику
+  // Остановка при клике/тапе
   container.addEventListener('click', () => {
     cancelAnimationFrame(scrollLoop);
     console.log("Прокрутка остановлена");
 
-    // Возобновление через 5 секунд
     setTimeout(() => {
       console.log("Прокрутка возобновлена");
       requestAnimationFrame(scrollLoop);
