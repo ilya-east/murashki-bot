@@ -24,9 +24,9 @@ body {
   display: flex;
   justify-content: center;
   padding: 16px 12px;
-  overflow-y: auto;
-  height: 400px;
-  -webkit-overflow-scrolling: touch;
+  overflow-y: auto; /* Включаем вертикальный скролл */
+  height: 400px; /* Фиксированная высота контейнера */
+  -webkit-overflow-scrolling: touch; /* Для iOS */
   position: relative;
   scroll-behavior: auto;
 }
@@ -50,6 +50,8 @@ body {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
   box-sizing: border-box;
   gap: var(--gap);
+  transition: opacity 0.2s ease; /* 🔥 Точная анимация появления/исчезновения */
+  will-change: transform; /* Оптимизация под прокрутку */
 }
 
 /* === Обложка === */
