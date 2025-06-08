@@ -27,11 +27,7 @@ fetch("tracks.json")
     });
 
     initPlayerLogic();
-
-    // === Точная высота одного трека (с отступами) ===
-    const trackHeight = getTrackHeight(); // 🔥 ТОЧНАЯ ВЫСОТА
-
-    initInfiniteScroll(trackHeight); // Передаём точную высоту
+    initInfiniteScroll();
   })
   .catch((err) => console.error("Ошибка загрузки треков:", err));
 
@@ -142,19 +138,8 @@ function initPlayerLogic() {
   });
 }
 
-// === Получаем точную высоту трека ===
-function getTrackHeight() {
-  const firstTrack = document.querySelector('.custom-player');
-  if (!firstTrack) return 80;
-
-  const style = getComputedStyle(firstTrack);
-  const height = firstTrack.offsetHeight;
-  const margin = parseInt(style.marginTop) + parseInt(style.marginBottom);
-  return height + margin;
-}
-
-// === Бесконечная прокрутка без рывков ===
-function initInfiniteScroll(trackHeight) {
+// === Бесконечная прокрутка без дерганья ===
+function initInfiniteScroll() {
   const container = document.querySelector('.players-container');
   const playerGrid = document.querySelector('.player-grid');
 
@@ -169,16 +154,15 @@ function initInfiniteScroll(trackHeight) {
     if (!isPaused) {
       container.scrollTop += 1;
 
-      // Если прошли ~50% контейнера — перемещаем первый трек в конец
-      if (container.scrollTop >= trackHeight * 2) {
+      // Если достигли ~50% прокрутки — перемещаем первый трек в конец
+      if (container.scrollTop >= container.scrollHeight / 2) {
         const firstPlayer = playerGrid.firstElementChild;
         if (firstPlayer) {
-          firstPlayer.style.opacity = '0';
+          firstPlayer.style.opacity = '0'; // Скрываем трек
           setTimeout(() => {
-            playerGrid.appendChild(firstPlayer);
-            container.scrollTop -= trackHeight; // Коррекция на точную высоту
-            firstPlayer.style.opacity = '1';
-            initPlayerLogic(); // Обновляем логику после перемещения
+            playerGrid.appendChild(firstPlayer); // Перемещаем в конец
+            firstPlayer.style.opacity = '1'; // Показываем снова
+            initPlayerLogic(); // Обновляем логику
           }, 150);
         }
       }
