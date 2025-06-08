@@ -25,9 +25,21 @@ body {
   justify-content: center;
   padding: 16px 12px;
   overflow-y: auto; /* Включаем вертикальный скролл */
-  scroll-behavior: smooth; /* Плавность */
-  -webkit-overflow-scrolling: touch; /* Для iOS */
   height: 400px; /* Фиксированная высота для прокрутки */
+  -webkit-overflow-scrolling: touch; /* Для iOS */
+  position: relative;
+}
+
+/* === Скроллбар (необязательно, но красиво) === */
+.players-container::-webkit-scrollbar {
+  width: 6px;
+}
+.players-container::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 9999px;
+}
+.players-container::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 /* === Грид с плеерами === */

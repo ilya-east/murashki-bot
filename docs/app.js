@@ -2,7 +2,7 @@
 const firebaseConfig = {
   apiKey: "AIzaSyBdmyEmyzp2eJK-wqkfCS-OSZrvQWy6Pg",
   authDomain: "murashki-6f04e.firebaseapp.com",
-  databaseURL: "https://murashki-6f04e-default-rtdb.firebaseio.com", 
+  databaseURL: "https://murashki-6f04e-default-rtdb.firebaseio.com",   
   projectId: "murashki-6f04e",
   storageBucket: "murashki-6f04e.appspot.com",
   messagingSenderId: "687056541772",
@@ -11,7 +11,7 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-// Загрузка треков
+// === Загрузка треков ===
 fetch("tracks.json")
   .then((res) => res.json())
   .then((tracks) => {
@@ -40,52 +40,13 @@ fetch("tracks.json")
       container.appendChild(wrapper);
     });
 
+    // === После загрузки всех треков — инициализируем логику плеера и прокрутки ===
     initPlayerLogic();
-    // === Автоматическая прокрутка ===
-let autoScrollInterval = null;
-let isPaused = false;
-
-function startAutoScroll() {
-  if (autoScrollInterval) return; // Убедимся, что не запущено дважды
-
-  autoScrollInterval = setInterval(() => {
-    if (!isPaused) {
-      const container = document.querySelector('.players-container');
-      container.scrollTop += 1; // Скорость прокрутки (1px за шаг)
-
-      // Если достигли низа — начать сверху
-      if (container.scrollTop + container.clientHeight >= container.scrollHeight) {
-        container.scrollTop = 0;
-      }
-    }
-  }, 50); // Интервал обновления (чем меньше число — тем быстрее)
-}
-
-function pauseAutoScroll() {
-  isPaused = true;
-}
-
-function resumeAutoScroll() {
-  isPaused = false;
-}
-
-// === Начинаем прокрутку при загрузке ===
-window.addEventListener('load', () => {
-  startAutoScroll();
-
-  // Останавливаем прокрутку при клике/тапе
-  document.querySelector('.players-container').addEventListener('click', () => {
-    pauseAutoScroll();
-    console.log("Прокрутка остановлена");
-    
-    // Возобновить через 5 секунд (можно убрать)
-    setTimeout(resumeAutoScroll, 5000);
-  });
-});
-
+    initAutoScroll(); // Запуск автопрокрутки
   })
   .catch((err) => console.error("Ошибка загрузки треков:", err));
 
+// === Логика проигрывателя ===
 function initPlayerLogic() {
   let currentAudio = null;
   let currentBtn = null;
@@ -151,6 +112,7 @@ function initPlayerLogic() {
     });
   });
 
+  // Динамическая высота iframe
   function resizeIframe() {
     const height = document.body.scrollHeight;
     window.parent.postMessage({ type: 'resize', height }, '*');
@@ -159,3 +121,36 @@ function initPlayerLogic() {
   window.addEventListener('load', resizeIframe);
   window.addEventListener('resize', resizeIframe);
 }
+
+// === Автоматическая прокрутка ===
+let autoScrollInterval = null;
+
+function initAutoScroll() {
+  const container = document.querySelector('.players-container');
+  if (!container || container.scrollHeight <= container.clientHeight) {
+    console.log("Прокрутка не нужна");
+    return;
+  }
+
+  let scrollPos = 0;
+
+  autoScrollInterval = setInterval(() => {
+    container.scrollTop = scrollPos++;
+    if (scrollPos >= container.scrollHeight - container.clientHeight) {
+      scrollPos = 0;
+    }
+  }, 50); // Скорость прокрутки
+}
+
+// === Остановка при клике/тапе ===
+window.addEventListener('load', () => {
+  const container = document.querySelector('.players-container');
+  if (!container) return;
+
+  container.addEventListener('click', () => {
+    if (autoScrollInterval) {
+      clearInterval(autoScrollInterval);
+      console.log("Прокрутка остановлена");
+    }
+  });
+});
