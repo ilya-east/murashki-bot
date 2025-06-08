@@ -36,6 +36,9 @@ function createTrackElement(track) {
   const wrapper = document.createElement("div");
   wrapper.className = "custom-player";
   wrapper.setAttribute("data-track-id", track.audio); // Для идентификации
+  wrapper.style.opacity = 0;
+  setTimeout(() => wrapper.style.opacity = 1, 10); // Небольшая задержка для плавности
+
   wrapper.innerHTML = `
     <img class="cover" src="${track.cover}" alt="cover">
     <div class="player-info">
@@ -67,7 +70,7 @@ function initPlayerLogic() {
   let currentAudio = null;
   let currentBtn = null;
 
-  // Удаляем старые кнопки, чтобы не было дублирования событий
+  // Удаляем старые кнопки, чтобы избежать дублирования обработчиков
   document.querySelectorAll(".play-btn").forEach(btn => {
     btn.replaceWith(btn.cloneNode(true));
   });
@@ -137,7 +140,7 @@ function initPlayerLogic() {
   });
 }
 
-// === Бесконечная прокрутка с перемещением первого элемента в конец ===
+// === Бесконечная прокрутка с "незаметным" перемещением треков ===
 function initInfiniteScroll() {
   const container = document.querySelector('.players-container');
   const playerGrid = document.querySelector('.player-grid');
@@ -147,53 +150,49 @@ function initInfiniteScroll() {
     return;
   }
 
-  function scrollLoop() {
-    container.scrollTop += 1;
+  let isPaused = false;
 
-    // Перемещаем, когда пользователь прошёл ~70% списка
-    if (container.scrollTop > (container.scrollHeight - container.clientHeight) * 0.7) {
-      const firstPlayer = playerGrid.firstElementChild;
-      if (firstPlayer) {
-        playerGrid.appendChild(firstPlayer); // Перемещаем в конец
-        container.scrollTop -= playerGrid.firstElementChild.offsetHeight; // Коррекция скролла
-        initPlayerLogic(); // Обновляем логику после перемещения
+  function scrollLoop() {
+    if (!isPaused) {
+      container.scrollTop += 1;
+
+      // Если пользователь прошёл ~70% списка — начинаем перемещение
+      if (container.scrollTop > (container.scrollHeight - container.clientHeight) * 0.7) {
+        const firstPlayer = playerGrid.firstElementChild;
+        if (firstPlayer) {
+          firstPlayer.style.opacity = '0'; // Скрываем элемент перед перемещением
+          setTimeout(() => {
+            playerGrid.appendChild(firstPlayer);
+            container.scrollTop = 0; // Под капотом перестраиваем список
+            firstPlayer.style.opacity = '1';
+            initPlayerLogic(); // Обновляем логику
+          }, 150);
+        }
       }
     }
 
     requestAnimationFrame(scrollLoop);
   }
 
-  // Остановка при тапе
-  container.addEventListener('touchstart', () => {
-    cancelAnimationFrame(scrollLoop);
+  // Остановка при клике или тапе
+  container.addEventListener('click', () => {
+    isPaused = true;
     console.log("Прокрутка остановлена");
+    setTimeout(() => {
+      isPaused = false;
+      console.log("Прокрутка возобновлена");
+    }, 5000);
   });
 
-  // Возобновление через 5 секунд (опционально)
-  container.addEventListener('touchend', () => {
+  container.addEventListener('touchstart', () => {
+    isPaused = true;
+    console.log("Прокрутка остановлена");
     setTimeout(() => {
-      requestAnimationFrame(scrollLoop);
+      isPaused = false;
+      console.log("Прокрутка возобновлена");
     }, 5000);
   });
 
   // Запуск прокрутки
   requestAnimationFrame(scrollLoop);
 }
-
-// === Динамическая высота iframe ===
-function resizeIframe() {
-  const height = document.body.scrollHeight;
-  window.parent.postMessage({ type: 'resize', height }, '*');
-}
-
-window.addEventListener('load', () => {
-  resizeIframe();
-  initPlayerLogic();
-
-  // Небольшая задержка для стабильности отрисовки
-  setTimeout(() => {
-    initInfiniteScroll();
-  }, 1000);
-});
-
-window.addEventListener('resize', resizeIframe);
