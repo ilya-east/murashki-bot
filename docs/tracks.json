@@ -46,5 +46,17 @@
     "author": "souls_quotes",
     "audio": "audio/standup.mp3",
     "cover": "covers/standup.jpg"
+  },
+  {
+    "title": "Лето",
+    "author": "Nastua",
+    "audio": "audio/leto.mp3",
+    "cover": "covers/leto.jpg"
+  },
+  {
+    "title": "Про любовь",
+    "author": "Murashki",
+    "audio": "audio/pro.mp3",
+    "cover": "covers/pro.jpg"
   }
 ]
