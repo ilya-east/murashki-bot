@@ -88,11 +88,27 @@
       tracks[index].author = value;
     }
 
-    // === Сохранение ===
-    function saveTracks() {
-      console.log("Сохраняю:", tracks);
+    // === Сохранение в tracks.json ===
+    async function saveTracks() {
+      try {
+        // Обновляем tracks.json
+        const response = await fetch("tracks.json", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(tracks),
+        });
 
-      alert("Изменения сохранены локально. Чтобы обновить tracks.json — залей файл вручную или настрой GitHub Action.");
+        if (!response.ok) {
+          throw new Error(`Ошибка при сохранении: ${response.status}`);
+        }
+
+        alert("tracks.json успешно обновлён!");
+      } catch (error) {
+        console.error("Ошибка:", error);
+        alert("Произошла ошибка при сохранении. Проверьте консоль.");
+      }
     }
   </script>
 </body>
