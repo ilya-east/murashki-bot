@@ -142,18 +142,7 @@ function initPlayerLogic() {
   });
 }
 
-// === Получаем точную высоту одного трека ===
-function getTrackHeight() {
-  const firstTrack = document.querySelector('.custom-player');
-  if (!firstTrack) return 80;
-
-  const style = getComputedStyle(firstTrack);
-  const height = firstTrack.offsetHeight;
-  const margin = parseInt(style.marginTop) + parseInt(style.marginBottom);
-  return height + margin;
-}
-
-// === Бесконечная прокрутка без остановки ===
+// === Бесконечная прокрутка без скачков ===
 function initInfiniteScroll() {
   const container = document.querySelector('.players-container');
   const playerGrid = document.querySelector('.player-grid');
@@ -170,16 +159,16 @@ function initInfiniteScroll() {
     if (!isPaused) {
       container.scrollTop += 1;
 
-      // Когда остались последние пару треков — добавляем новые в конец
-      if (container.scrollTop + container.clientHeight >= container.scrollHeight - trackHeight * 2) {
+      // Когда достигли ~50% прокрутки — начинаем подготовку
+      if (container.scrollTop >= container.scrollHeight / 2) {
         const firstPlayer = playerGrid.firstElementChild;
         if (firstPlayer) {
-          firstPlayer.style.opacity = '0';
+          firstPlayer.style.opacity = '0'; // Скрываем первый трек
           setTimeout(() => {
-            playerGrid.appendChild(firstPlayer);
-            container.scrollTop -= trackHeight;
-            firstPlayer.style.opacity = '1';
-            initPlayerLogic(); // Перепривязываем события
+            playerGrid.appendChild(firstPlayer); // Перемещаем в конец
+            container.scrollTop -= trackHeight; // Корректируем scrollTop
+            firstPlayer.style.opacity = '1'; // Показываем снова
+            initPlayerLogic(); // Обновляем логику
           }, 150);
         }
       }
