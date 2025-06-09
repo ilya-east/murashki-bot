@@ -2,7 +2,6 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Админка Murashki</title>
   <style>
     body {
@@ -25,8 +24,8 @@
     .track img {
       width: 56px;
       height: 56px;
-      border-radius: 10px;
       object-fit: cover;
+      border-radius: 10px;
     }
 
     input[type="text"] {
@@ -38,7 +37,7 @@
       color: white;
     }
 
-    button.save-btn {
+    button {
       background: #ff0000;
       border: none;
       padding: 10px 20px;
@@ -46,25 +45,74 @@
       color: white;
       font-weight: bold;
       cursor: pointer;
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
   <h2>🎵 Админка плеера</h2>
 
+  <button onclick="updateTracks()">🔄 Обновить треки</button>
+  <button onclick="saveTracks()">💾 Сохранить tracks.json</button>
+
   <div id="track-list"></div>
-  <button class="save-btn" onclick="downloadTracks()">💾 Скачать tracks.json</button>
 
   <script>
     let tracks = [];
 
     // === Загрузка текущего tracks.json ===
-    fetch("tracks.json")
-      .then(res => res.json())
-      .then(data => {
-        tracks = data;
-        renderTracks();
+    function fetchAndUpdate() {
+      fetch("/tracks.json")
+        .then(res => res.json())
+        .then(data => {
+          tracks = data;
+          renderTracks();
+        });
+    }
+
+    // === Кнопка "Обновить треки" ===
+    function updateTracks() {
+      fetch("/update")
+        .then(res => {
+          if (res.ok) {
+            alert("✅ Новые треки добавлены");
+            fetchAndUpdate(); // Перезагружаем JSON
+          } else {
+            alert("❌ Не удалось обновить треки");
+          }
+        })
+        .catch(err => {
+          console.error("⚠️ Ошибка подключения к серверу:", err);
+          alert("Запустите server.py через консоль");
+        });
+    }
+
+    // === Кнопка "Сохранить tracks.json" ===
+    function saveTracks() {
+      const updatedTracks = tracks.map(track => ({
+        title: track.title,
+        author: track.author,
+        audio: track.audio,
+        cover: track.cover
+      }));
+
+      fetch("/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedTracks)
+      })
+      .then(res => {
+        if (res.ok) {
+          alert("✅ tracks.json успешно сохранён!");
+        } else {
+          alert("❌ Не удалось сохранить tracks.json");
+        }
+      })
+      .catch(err => {
+        console.error("Ошибка сохранения:", err);
+        alert("⚠️ Сервер не запущен или произошла ошибка");
       });
+    }
 
     // === Отрисовка списка треков ===
     function renderTracks() {
@@ -91,24 +139,10 @@
       tracks[index].author = value;
     }
 
-    // === Сохранение файла tracks.json ===
-    function downloadTracks() {
-      if (!tracks.length) {
-        alert("Нет данных для сохранения.");
-        return;
-      }
-
-      const jsonStr = JSON.stringify(tracks, null, 2);
-      const blob = new Blob([jsonStr], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "tracks.json";
-      a.click();
-
-      alert("Файл tracks.json готов! Замени им старый и сделай push на GitHub.");
-    }
+    // === Инициализация ===
+    window.onload = () => {
+      fetchAndUpdate();
+    };
   </script>
 </body>
 </html>
