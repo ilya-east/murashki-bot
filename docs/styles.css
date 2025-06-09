@@ -144,15 +144,3 @@ body {
   50% { transform: scale(0.99); fill: #33f1ff; }
   100% { transform: scale(1); fill: #fff; }
 }
-
-/* === Мерцание кнопок при паузе === */
-.players-container.paused .like-btn svg,
-.players-container.paused .play-btn svg {
-  animation: beat 1s ease-in-out infinite;
-}
-
-@keyframes beat {
-  0% { transform: scale(1); fill: #fff; }
-  50% { transform: scale(0.95); fill: #33f1ff; }
-  100% { transform: scale(1); fill: #fff; }
-}
