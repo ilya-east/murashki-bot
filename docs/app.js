@@ -21,10 +21,13 @@ fetch("tracks.json")
 
     const container = document.getElementById("players");
 
-    tracks.forEach(track => {
+    // Добавляем несколько копий треков для бесконечности
+    const trackCount = Math.max(6, Math.floor(container.clientHeight / 80) * 2); // Минимум 6 треков
+    for (let i = 0; i < trackCount; i++) {
+      const track = tracks[i % tracks.length]; // Зацикливаем треки
       const wrapper = createTrackElement(track);
       container.appendChild(wrapper);
-    });
+    }
 
     initPlayerLogic();
     initInfiniteScroll();
@@ -35,7 +38,8 @@ fetch("tracks.json")
 function createTrackElement(track) {
   const wrapper = document.createElement("div");
   wrapper.className = "custom-player";
-  wrapper.setAttribute("data-track-id", track.audio); // Для идентификации
+  wrapper.setAttribute("data-track-id", track.audio);
+  wrapper.style.opacity = '1';
 
   wrapper.innerHTML = `
     <img class="cover" src="${track.cover}" alt="cover">
@@ -138,7 +142,18 @@ function initPlayerLogic() {
   });
 }
 
-// === Бесконечная прокрутка без дерганья ===
+// === Получаем точную высоту одного трека ===
+function getTrackHeight() {
+  const firstTrack = document.querySelector('.custom-player');
+  if (!firstTrack) return 80;
+
+  const style = getComputedStyle(firstTrack);
+  const height = firstTrack.offsetHeight;
+  const margin = parseInt(style.marginTop) + parseInt(style.marginBottom);
+  return height + margin;
+}
+
+// === Бесконечная прокрутка без остановки ===
 function initInfiniteScroll() {
   const container = document.querySelector('.players-container');
   const playerGrid = document.querySelector('.player-grid');
@@ -149,20 +164,22 @@ function initInfiniteScroll() {
   }
 
   let isPaused = false;
+  const trackHeight = getTrackHeight(); // Точная высота трека
 
   function scrollLoop() {
     if (!isPaused) {
       container.scrollTop += 1;
 
-      // Если достигли ~50% прокрутки — перемещаем первый трек в конец
-      if (container.scrollTop >= container.scrollHeight / 2) {
+      // Когда остались последние пару треков — добавляем новые в конец
+      if (container.scrollTop + container.clientHeight >= container.scrollHeight - trackHeight * 2) {
         const firstPlayer = playerGrid.firstElementChild;
         if (firstPlayer) {
-          firstPlayer.style.opacity = '0'; // Скрываем трек
+          firstPlayer.style.opacity = '0';
           setTimeout(() => {
-            playerGrid.appendChild(firstPlayer); // Перемещаем в конец
-            firstPlayer.style.opacity = '1'; // Показываем снова
-            initPlayerLogic(); // Обновляем логику
+            playerGrid.appendChild(firstPlayer);
+            container.scrollTop -= trackHeight;
+            firstPlayer.style.opacity = '1';
+            initPlayerLogic(); // Перепривязываем события
           }, 150);
         }
       }
