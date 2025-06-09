@@ -5,50 +5,65 @@ audio_folder = "audio"
 cover_folder = "covers"
 output_file = "tracks.json"
 
-tracks = []
+print("Starting scan...")
 
-# Если tracks.json существует — загружаем его
-if os.path.exists(output_file):
+if not os.path.exists(audio_folder):
+    print(f"Audio folder '{audio_folder}' not found!")
+    exit()
+
+if not os.path.exists(cover_folder):
+    print(f"Covers folder '{cover_folder}' not found!")
+    exit()
+
+# === Загрузка существующих данных ===
+try:
     with open(output_file, "r", encoding="utf-8") as f:
-        try:
-            tracks = json.load(f)
-        except json.JSONDecodeError:
-            print("[⚠️] Файл tracks.json повреждён или отсутствует — создаём новый")
+        existing_tracks = json.load(f)
+except FileNotFoundError:
+    existing_tracks = []
 
-# Собираем треки
-updated_tracks = []
+# Убираем дубликаты из старого списка
+unique_tracks = {}
+for track in existing_tracks:
+    audio_path = track["audio"]
+    unique_tracks[audio_path] = track  # Автоматически перезапишет при повторах
+
+# === Сканирование новых треков ===
+new_tracks = []
 
 for filename in os.listdir(audio_folder):
-    if not filename.endswith(".mp3"):
-        continue
+    if filename.endswith(".mp3"):
+        name = os.path.splitext(filename)[0]
+        cover_found = False
+        cover_path = ""
 
-    name = os.path.splitext(filename)[0]
-    cover_found = False
-    cover_path = ""
+        # Ищем обложку
+        for ext in [".png", ".jpg", ".jpeg"]:
+            candidate = os.path.join(cover_folder, f"{name}{ext}")
+            if os.path.exists(candidate):
+                cover_path = f"covers/{name}{ext}"
+                cover_found = True
+                break
 
-    for ext in [".png", ".jpg", ".jpeg"]:
-        candidate = os.path.join(cover_folder, f"{name}{ext}")
-        if os.path.exists(candidate):
-            cover_path = f"covers/{name}{ext}"
-            cover_found = True
-            break
+        if not cover_found:
+            print(f"No cover found for {filename}")
+            continue
 
-    if not cover_found:
-        print(f"[⚠️] Обложка для {filename} не найдена!")
-        continue
+        audio_path = f"audio/{filename}"
 
-    # Ищем существующий трек по имени файла
-    existing_track = next((t for t in tracks if t["audio"] == f"audio/{filename}"), None)
+        # Добавляем в уникальный словарь
+        if audio_path not in unique_tracks:
+            unique_tracks[audio_path] = {
+                "title": name,
+                "author": "Murashki",
+                "audio": audio_path,
+                "cover": cover_path
+            }
 
-    updated_tracks.append({
-        "title": existing_track["title"] if existing_track else name,
-        "author": existing_track["author"] if existing_track else "Murashki",
-        "audio": f"audio/{filename}",
-        "cover": cover_path
-    })
+# === Сохраняем только уникальные треки ===
+updated_tracks = list(unique_tracks.values())
 
-# Сохраняем обновлённый список
 with open(output_file, "w", encoding="utf-8") as f:
     json.dump(updated_tracks, f, ensure_ascii=False, indent=2)
 
-print(f"[✅] Сохранено {len(updated_tracks)} треков в {output_file}")
+print(f"Saved {len(updated_tracks)} tracks to {output_file}")

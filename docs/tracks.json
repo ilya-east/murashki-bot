@@ -1,13 +1,13 @@
 [
   {
-    "title": "Я - сама тьма ",
+    "title": "Я - сама тьма",
     "author": "souls_quotes",
     "audio": "audio/dark.mp3",
     "cover": "covers/dark.jpg"
   },
   {
     "title": "Детство",
-    "author": "Nastya",
+    "author": "Nastua",
     "audio": "audio/detstvo.mp3",
     "cover": "covers/detstvo.jpg"
   },
@@ -18,7 +18,7 @@
     "cover": "covers/fight.jpg"
   },
   {
-    "title": "Поцелуй меня",
+    "title": "Целуй меня",
     "author": "Эхо Пепла",
     "audio": "audio/kiss.mp3",
     "cover": "covers/kiss.jpg"
@@ -30,7 +30,7 @@
     "cover": "covers/kunai.jpg"
   },
   {
-    "title": "Чарующая раза",
+    "title": "Чарующая роза",
     "author": "Эхо Пепла",
     "audio": "audio/roza.mp3",
     "cover": "covers/roza.jpg"
