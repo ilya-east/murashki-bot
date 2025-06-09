@@ -151,47 +151,44 @@ function initScrollLoop() {
   let direction = 1; // 1 = вниз, -1 = вверх
 
   function scrollLoop() {
-    if (container.classList.contains('paused')) {
-      requestAnimationFrame(scrollLoop);
-      return; // Пропускаем скролл, если стоит пауза
-    }
+    if (!container.classList.contains('paused')) {
+      container.scrollTop += direction;
 
-    container.scrollTop += direction;
+      // Если достигли низа — меняем направление через 3 секунды
+      if (direction === 1 && container.scrollTop >= container.scrollHeight - container.clientHeight) {
+        container.classList.add('paused');
+        setTimeout(() => {
+          direction = -1;
+          container.classList.remove('paused');
+        }, 3000);
+      }
 
-    // Если достигли низа — меняем направление через 5 секунд
-    if (direction === 1 && container.scrollTop >= container.scrollHeight - container.clientHeight) {
-      container.classList.add('paused');
-      setTimeout(() => {
-        direction = -1;
-        container.classList.remove('paused');
-      }, 5000);
-    }
-
-    // Если достигли верха — меняем направление через 5 секунд
-    if (direction === -1 && container.scrollTop <= 0) {
-      container.classList.add('paused');
-      setTimeout(() => {
-        direction = 1;
-        container.classList.remove('paused');
-      }, 5000);
+      // Если достигли верха — меняем направление через 3 секунды
+      if (direction === -1 && container.scrollTop <= 0) {
+        container.classList.add('paused');
+        setTimeout(() => {
+          direction = 1;
+          container.classList.remove('paused');
+        }, 3000);
+      }
     }
 
     requestAnimationFrame(scrollLoop);
   }
 
-  // Остановка при клике/тапе
+  // Остановка при клике/тапе → тоже 3 секунды
   container.addEventListener('click', () => {
     container.classList.add('paused');
     setTimeout(() => {
       container.classList.remove('paused');
-    }, 5000);
+    }, 3000);
   });
 
   container.addEventListener('touchstart', () => {
     container.classList.add('paused');
     setTimeout(() => {
       container.classList.remove('paused');
-    }, 5000);
+    }, 3000);
   });
 
   // Запуск прокрутки
