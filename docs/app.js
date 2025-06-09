@@ -138,7 +138,7 @@ function initPlayerLogic() {
   });
 }
 
-// === Автопрокрутка туда-обратно ===
+// === Автопрокрутка туда-обратно + эффект активности ===
 function initScrollLoop() {
   const container = document.querySelector('.players-container');
   const playerGrid = document.querySelector('.player-grid');
@@ -148,51 +148,49 @@ function initScrollLoop() {
     return;
   }
 
-  let isPaused = false;
   let direction = 1; // 1 = вниз, -1 = вверх
 
   function scrollLoop() {
-    if (!isPaused) {
-      container.scrollTop += direction;
+    if (container.classList.contains('paused')) {
+      requestAnimationFrame(scrollLoop);
+      return; // Пропускаем скролл, если стоит пауза
+    }
 
-      // Если достигли низа — меняем направление на вверх через 5 сек
-      if (direction === 1 && container.scrollTop >= container.scrollHeight - container.clientHeight) {
-        isPaused = true;
-        setTimeout(() => {
-          direction = -1;
-          isPaused = false;
-        }, 5000);
-      }
+    container.scrollTop += direction;
 
-      // Если достигли верха — меняем направление на вниз через 5 сек
-      if (direction === -1 && container.scrollTop <= 0) {
-        isPaused = true;
-        setTimeout(() => {
-          direction = 1;
-          isPaused = false;
-        }, 5000);
-      }
+    // Если достигли низа — меняем направление через 5 секунд
+    if (direction === 1 && container.scrollTop >= container.scrollHeight - container.clientHeight) {
+      container.classList.add('paused');
+      setTimeout(() => {
+        direction = -1;
+        container.classList.remove('paused');
+      }, 5000);
+    }
+
+    // Если достигли верха — меняем направление через 5 секунд
+    if (direction === -1 && container.scrollTop <= 0) {
+      container.classList.add('paused');
+      setTimeout(() => {
+        direction = 1;
+        container.classList.remove('paused');
+      }, 5000);
     }
 
     requestAnimationFrame(scrollLoop);
   }
 
-  // Остановка при клике или тапе
+  // Остановка при клике/тапе
   container.addEventListener('click', () => {
-    isPaused = true;
-    console.log("Прокрутка остановлена");
+    container.classList.add('paused');
     setTimeout(() => {
-      isPaused = false;
-      console.log("Прокрутка возобновлена");
+      container.classList.remove('paused');
     }, 5000);
   });
 
   container.addEventListener('touchstart', () => {
-    isPaused = true;
-    console.log("Прокрутка остановлена");
+    container.classList.add('paused');
     setTimeout(() => {
-      isPaused = false;
-      console.log("Прокрутка возобновлена");
+      container.classList.remove('paused');
     }, 5000);
   });
 

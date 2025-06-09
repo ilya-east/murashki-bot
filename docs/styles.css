@@ -133,3 +133,14 @@ body {
     height: 28px;
   }
 }
+
+/* === Эффект "паузы" при остановке прокрутки === */
+.players-container.paused {
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.99); }
+  100% { transform: scale(1); }
+}
