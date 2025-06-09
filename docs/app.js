@@ -11,28 +11,18 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
+let tracks = [];
+
 // === Загрузка треков ===
 fetch("tracks.json")
   .then((res) => res.json())
   .then((data) => {
+    tracks = data;
+
     const container = document.getElementById("players");
 
-    data.forEach(track => {
-      const wrapper = document.createElement("div");
-      wrapper.className = "custom-player";
-      wrapper.innerHTML = `
-        <img class="cover" src="${track.cover}" alt="cover">
-        <div class="player-info">
-          <div class="player-title">${track.title}</div>
-          <div class="player-author">${track.author}</div>
-        </div>
-        <div class="player-controls">
-          <button class="btn play-btn">▶</button>
-          <button class="btn like-btn">❤</button>
-          <span class="like-count">0</span>
-        </div>
-        <audio src="${track.audio}"></audio>
-      `;
+    tracks.forEach(track => {
+      const wrapper = createTrackElement(track);
       container.appendChild(wrapper);
     });
 
@@ -41,9 +31,50 @@ fetch("tracks.json")
   })
   .catch((err) => console.error("Ошибка загрузки треков:", err));
 
-// === Логика плеера и лайков ===
+// === Создаём элемент трека ===
+function createTrackElement(track) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "custom-player";
+  wrapper.setAttribute("data-track-id", track.audio); // Для идентификации
+
+  wrapper.innerHTML = `
+    <img class="cover" src="${track.cover}" alt="cover">
+    <div class="player-info">
+      <div class="player-title">${track.title}</div>
+      <div class="player-author">${track.author}</div>
+    </div>
+    <div class="player-controls">
+      <button class="btn play-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>
+      </button>
+      <button class="btn like-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff">
+          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 
+                   2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09
+                   C13.09 3.81 14.76 3 16.5 3 
+                   19.58 3 22 5.42 22 8.5
+                   c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+        </svg>
+      </button>
+      <span class="like-count">0</span>
+    </div>
+    <audio src="${track.audio}"></audio>
+  `;
+  return wrapper;
+}
+
+// === Логика проигрывателя ===
 function initPlayerLogic() {
   let currentAudio = null;
+  let currentBtn = null;
+
+  // Удаляем старые кнопки, чтобы избежать дублирования событий
+  document.querySelectorAll(".play-btn").forEach(btn => {
+    btn.replaceWith(btn.cloneNode(true));
+  });
+  document.querySelectorAll(".like-btn").forEach(btn => {
+    btn.replaceWith(btn.cloneNode(true));
+  });
 
   document.querySelectorAll(".custom-player").forEach((player) => {
     const audio = player.querySelector("audio");
@@ -51,32 +82,58 @@ function initPlayerLogic() {
     const likeBtn = player.querySelector(".like-btn");
     const likeCount = player.querySelector(".like-count");
 
+    const trackId = audio.src.split("/").pop().split(".")[0];
+    const dbRef = firebase.database().ref("likes/" + trackId);
+
+    dbRef.on("value", (snapshot) => {
+      likeCount.textContent = snapshot.val() || 0;
+    });
+
+    if (localStorage.getItem(`liked_${trackId}`)) {
+      likeBtn.querySelector("svg").setAttribute("fill", "#ff0000");
+    }
+
     playBtn.addEventListener("click", () => {
       if (currentAudio && currentAudio !== audio) {
         currentAudio.pause();
-        playBtn.textContent = "▶";
+        if (currentBtn) {
+          currentBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>';
+        }
       }
 
       if (audio.paused) {
-        audio.play().catch(() => {});
-        playBtn.textContent = "❚❚";
+        audio.play().catch((err) => {
+          console.error("Ошибка воспроизведения:", err);
+          playBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>';
+        });
+        playBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
         currentAudio = audio;
+        currentBtn = playBtn;
       } else {
         audio.pause();
-        playBtn.textContent = "▶";
+        playBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>';
       }
     });
 
+    audio.addEventListener("ended", () => {
+      playBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>';
+    });
+
     likeBtn.addEventListener("click", () => {
-      const trackId = audio.src.split("/").pop().split(".")[0];
-      const dbRef = firebase.database().ref("likes/" + trackId);
+      const likedKey = `liked_${trackId}`;
+      const alreadyLiked = localStorage.getItem(likedKey);
 
       dbRef.transaction((likes) => {
-        return (likes || 0) + 1;
+        if (alreadyLiked) {
+          localStorage.removeItem(likedKey);
+          likeBtn.querySelector("svg").setAttribute("fill", "#fff");
+          return (likes || 1) - 1;
+        } else {
+          localStorage.setItem(likedKey, "true");
+          likeBtn.querySelector("svg").setAttribute("fill", "#ff0000");
+          return (likes || 0) + 1;
+        }
       });
-
-      likeCount.textContent = parseInt(likeCount.textContent) + 1;
-      likeBtn.style.color = "#ff0000";
     });
   });
 }
@@ -84,10 +141,15 @@ function initPlayerLogic() {
 // === Автопрокрутка туда-обратно ===
 function initScrollLoop() {
   const container = document.querySelector('.players-container');
-  if (!container || container.scrollHeight <= container.clientHeight) return;
+  const playerGrid = document.querySelector('.player-grid');
 
-  let direction = 1; // 1 = вниз, -1 = вверх
+  if (!container || !playerGrid || container.scrollHeight <= container.clientHeight) {
+    console.log("Прокрутка не нужна");
+    return;
+  }
+
   let isPaused = false;
+  let direction = 1; // 1 = вниз, -1 = вверх
 
   function scrollLoop() {
     if (!isPaused) {
@@ -127,11 +189,13 @@ function initScrollLoop() {
 
   container.addEventListener('touchstart', () => {
     isPaused = true;
+    console.log("Прокрутка остановлена");
     setTimeout(() => {
       isPaused = false;
       console.log("Прокрутка возобновлена");
     }, 5000);
   });
 
+  // Запуск прокрутки
   requestAnimationFrame(scrollLoop);
 }
