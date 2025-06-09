@@ -153,6 +153,6 @@ body {
 
 @keyframes beat {
   0% { transform: scale(1); fill: #fff; }
-  50% { transform: scale(0.95); fill: #ff3333; }
+  50% { transform: scale(0.95); fill: #33f1ff; }
   100% { transform: scale(1); fill: #fff; }
 }
