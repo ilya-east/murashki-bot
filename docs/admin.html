@@ -4,11 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Админка Murashki</title>
-  <link rel="stylesheet" href="styles.css" />
   <style>
     body {
-      padding: 20px;
+      background: #2d263a;
+      color: white;
       font-family: sans-serif;
+      padding: 20px;
     }
 
     .track {
@@ -16,9 +17,9 @@
       align-items: center;
       gap: 16px;
       margin-bottom: 16px;
-      background: var(--bg-main);
-      border-radius: var(--radius);
       padding: 12px 16px;
+      background: #3b3644;
+      border-radius: 16px;
     }
 
     .track img {
@@ -28,22 +29,23 @@
       object-fit: cover;
     }
 
-    .track input[type="text"] {
+    input[type="text"] {
       flex-grow: 1;
       padding: 6px 10px;
       border: none;
       border-radius: 8px;
       background: #444;
-      color: #fff;
+      color: white;
     }
 
-    .save-btn {
-      background: var(--color-accent);
+    button.save-btn {
+      background: #ff0000;
       border: none;
-      padding: 6px 12px;
+      padding: 10px 20px;
       border-radius: 8px;
-      cursor: pointer;
+      color: white;
       font-weight: bold;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -51,12 +53,12 @@
   <h2>🎵 Админка плеера</h2>
 
   <div id="track-list"></div>
-  <button onclick="downloadTracks()">💾 Скачать tracks.json</button>
+  <button class="save-btn" onclick="downloadTracks()">💾 Скачать tracks.json</button>
 
   <script>
     let tracks = [];
 
-    // === Загрузка tracks.json ===
+    // === Загрузка текущего tracks.json ===
     fetch("tracks.json")
       .then(res => res.json())
       .then(data => {
@@ -64,7 +66,7 @@
         renderTracks();
       });
 
-    // === Отрисовка списка ===
+    // === Отрисовка списка треков ===
     function renderTracks() {
       const container = document.getElementById("track-list");
       container.innerHTML = "";
@@ -89,9 +91,15 @@
       tracks[index].author = value;
     }
 
-    // === Скачивание обновлённого файла ===
+    // === Сохранение файла tracks.json ===
     function downloadTracks() {
-      const blob = new Blob([JSON.stringify(tracks, null, 2)], { type: "application/json" });
+      if (!tracks.length) {
+        alert("Нет данных для сохранения.");
+        return;
+      }
+
+      const jsonStr = JSON.stringify(tracks, null, 2);
+      const blob = new Blob([jsonStr], { type: "application/json" });
       const url = URL.createObjectURL(blob);
 
       const a = document.createElement("a");
@@ -99,7 +107,7 @@
       a.download = "tracks.json";
       a.click();
 
-      alert("Файл tracks.json готов для загрузки. Замени им старый файл и сделай push на GitHub.");
+      alert("Файл tracks.json готов! Замени им старый и сделай push на GitHub.");
     }
   </script>
 </body>
