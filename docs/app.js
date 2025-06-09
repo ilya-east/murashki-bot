@@ -48,6 +48,8 @@ function initPlayerLogic() {
   document.querySelectorAll(".custom-player").forEach((player) => {
     const audio = player.querySelector("audio");
     const playBtn = player.querySelector(".play-btn");
+    const likeBtn = player.querySelector(".like-btn");
+    const likeCount = player.querySelector(".like-count");
 
     playBtn.addEventListener("click", () => {
       if (currentAudio && currentAudio !== audio) {
@@ -63,6 +65,18 @@ function initPlayerLogic() {
         audio.pause();
         playBtn.textContent = "▶";
       }
+    });
+
+    likeBtn.addEventListener("click", () => {
+      const trackId = audio.src.split("/").pop().split(".")[0];
+      const dbRef = firebase.database().ref("likes/" + trackId);
+
+      dbRef.transaction((likes) => {
+        return (likes || 0) + 1;
+      });
+
+      likeCount.textContent = parseInt(likeCount.textContent) + 1;
+      likeBtn.style.color = "#ff0000";
     });
   });
 }

@@ -3,6 +3,8 @@
   --bg-btn: #3b3644;
   --bg-btn-hover: #5a4e68;
   --color-text: #fff;
+  --color-accent: #ff0000;
+  --color-secondary: #ccc;
   --radius: 16px;
   --gap: 12px;
 }
@@ -22,11 +24,12 @@ body {
   overflow-y: auto;
   height: 400px;
   -webkit-overflow-scrolling: touch;
+  position: relative;
 }
 
 .player-grid {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: var(--gap);
   width: 100%;
   max-width: 960px;
@@ -41,6 +44,39 @@ body {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
   box-sizing: border-box;
   gap: var(--gap);
+  transition: opacity 0.2s ease;
+}
+
+.cover {
+  width: 56px;
+  height: 56px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.player-info {
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.player-title {
+  font-weight: bold;
+  font-size: 16px;
+  color: var(--color-text);
+  overflow-wrap: break-word;
+}
+
+.player-author {
+  font-size: 13px;
+  color: var(--color-secondary);
+  margin-top: 2px;
+}
+
+.player-controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
 
 .btn {
@@ -53,8 +89,6 @@ body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: white;
-  font-size: 14px;
   transition: background 0.2s ease, transform 0.2s ease;
 }
 
@@ -64,8 +98,38 @@ body {
 }
 
 .like-count {
+  font-size: 13px;
+  color: var(--color-muted);
   min-width: 24px;
   text-align: center;
-  font-size: 13px;
-  color: #aaa;
+}
+
+/* === Мобильные устройства === */
+@media (max-width: 768px) {
+  .players-container {
+    padding: 12px 8px;
+  }
+
+  .player-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .custom-player {
+    flex-direction: row;
+    padding: 10px;
+  }
+
+  .player-title {
+    font-size: 15px;
+  }
+
+  .player-author {
+    font-size: 12px;
+  }
+
+  .btn {
+    width: 28px;
+    height: 28px;
+  }
 }
