@@ -1,49 +1,49 @@
 [
   {
-    "title": "dark",
-    "author": "Murashki",
+    "title": "Я - сама тьма ",
+    "author": "souls_quotes",
     "audio": "audio/dark.mp3",
     "cover": "covers/dark.jpg"
   },
   {
-    "title": "detstvo",
-    "author": "Murashki",
+    "title": "Детство",
+    "author": "Nastya",
     "audio": "audio/detstvo.mp3",
     "cover": "covers/detstvo.jpg"
   },
   {
-    "title": "fight",
-    "author": "Murashki",
+    "title": "Сражайся или умри",
+    "author": "souls_quotes",
     "audio": "audio/fight.mp3",
     "cover": "covers/fight.jpg"
   },
   {
-    "title": "kiss",
-    "author": "Murashki",
+    "title": "Поцелуй меня",
+    "author": "Эхо Пепла",
     "audio": "audio/kiss.mp3",
     "cover": "covers/kiss.jpg"
   },
   {
-    "title": "kunai",
+    "title": "Кунай",
     "author": "Murashki",
     "audio": "audio/kunai.mp3",
     "cover": "covers/kunai.jpg"
   },
   {
-    "title": "roza",
-    "author": "Murashki",
+    "title": "Чарующая раза",
+    "author": "Эхо Пепла",
     "audio": "audio/roza.mp3",
     "cover": "covers/roza.jpg"
   },
   {
-    "title": "samuray",
+    "title": "Самурай",
     "author": "Murashki",
     "audio": "audio/samuray.mp3",
     "cover": "covers/samuray.jpg"
   },
   {
-    "title": "standup",
-    "author": "Murashki",
+    "title": "Встань и иди дальше",
+    "author": "souls_quotes",
     "audio": "audio/standup.mp3",
     "cover": "covers/standup.jpg"
   }
