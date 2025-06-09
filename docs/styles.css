@@ -141,7 +141,7 @@ body {
 
 @keyframes pulse {
   0% { transform: scale(1); }
-  50% { transform: scale(0.99); fill: #ff3333; }
+  50% { transform: scale(0.99); fill: #33f1ff; }
   100% { transform: scale(1); fill: #fff; }
 }
 
