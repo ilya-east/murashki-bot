@@ -8,6 +8,7 @@
   <style>
     body {
       padding: 20px;
+      font-family: sans-serif;
     }
 
     .track {
@@ -33,7 +34,7 @@
       border: none;
       border-radius: 8px;
       background: #444;
-      color: white;
+      color: #fff;
     }
 
     .save-btn {
@@ -50,7 +51,7 @@
   <h2>🎵 Админка плеера</h2>
 
   <div id="track-list"></div>
-  <button onclick="saveTracks()">💾 Сохранить изменения</button>
+  <button onclick="downloadTracks()">💾 Скачать tracks.json</button>
 
   <script>
     let tracks = [];
@@ -88,27 +89,17 @@
       tracks[index].author = value;
     }
 
-    // === Сохранение в tracks.json ===
-    async function saveTracks() {
-      try {
-        // Обновляем tracks.json
-        const response = await fetch("tracks.json", {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(tracks),
-        });
+    // === Скачивание обновлённого файла ===
+    function downloadTracks() {
+      const blob = new Blob([JSON.stringify(tracks, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
 
-        if (!response.ok) {
-          throw new Error(`Ошибка при сохранении: ${response.status}`);
-        }
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "tracks.json";
+      a.click();
 
-        alert("tracks.json успешно обновлён!");
-      } catch (error) {
-        console.error("Ошибка:", error);
-        alert("Произошла ошибка при сохранении. Проверьте консоль.");
-      }
+      alert("Файл tracks.json готов для загрузки. Замени им старый файл и сделай push на GitHub.");
     }
   </script>
 </body>
