@@ -138,7 +138,7 @@ function initPlayerLogic() {
   });
 }
 
-// === Автопрокрутка туда-обратно + эффект активности ===
+// === Автопрокрутка только на мобильных устройствах ===
 function initScrollLoop() {
   const container = document.querySelector('.players-container');
   const playerGrid = document.querySelector('.player-grid');
@@ -150,8 +150,11 @@ function initScrollLoop() {
 
   let direction = 1; // 1 = вниз, -1 = вверх
 
+  // Определяем, мобильное ли устройство
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
   function scrollLoop() {
-    if (!container.classList.contains('paused')) {
+    if (isMobile && !container.classList.contains('paused')) {
       container.scrollTop += direction;
 
       // Если достигли низа — меняем направление через 3 секунды
@@ -176,20 +179,22 @@ function initScrollLoop() {
     requestAnimationFrame(scrollLoop);
   }
 
-  // Остановка при клике/тапе → тоже 3 секунды
-  container.addEventListener('click', () => {
-    container.classList.add('paused');
-    setTimeout(() => {
-      container.classList.remove('paused');
-    }, 3000);
-  });
+  // Остановка при клике или тапе
+  if (isMobile) {
+    container.addEventListener('click', () => {
+      container.classList.add('paused');
+      setTimeout(() => {
+        container.classList.remove('paused');
+      }, 3000);
+    });
 
-  container.addEventListener('touchstart', () => {
-    container.classList.add('paused');
-    setTimeout(() => {
-      container.classList.remove('paused');
-    }, 3000);
-  });
+    container.addEventListener('touchstart', () => {
+      container.classList.add('paused');
+      setTimeout(() => {
+        container.classList.remove('paused');
+      }, 3000);
+    });
+  }
 
   // Запуск прокрутки
   requestAnimationFrame(scrollLoop);
