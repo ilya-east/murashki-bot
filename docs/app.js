@@ -109,6 +109,12 @@ function initPlayerLogic() {
         playBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
         currentAudio = audio;
         currentBtn = playBtn;
+
+        // Обновляем Media Session
+        updateMediaSession({
+          title: audio.parentElement.querySelector('.player-title').textContent,
+          artworkUrl: audio.parentElement.querySelector('.cover').src
+        });
       } else {
         audio.pause();
         playBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>';
@@ -179,7 +185,7 @@ function initScrollLoop() {
     requestAnimationFrame(scrollLoop);
   }
 
-  // Только мобильные устройства получают обработчики событий
+  // Только мобильные получают обработчики событий
   if (isMobile) {
     container.addEventListener('click', () => {
       container.classList.add('paused');
@@ -198,4 +204,43 @@ function initScrollLoop() {
 
   // Запуск прокрутки
   requestAnimationFrame(scrollLoop);
+}
+
+// === Функция для работы с шторкой ===
+function updateMediaSession({ title, artworkUrl }) {
+  if ("mediaSession" in navigator) {
+    try {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: title,
+        artist: "Murashki",
+        album: "Мурашки Плеер",
+        artwork: [
+          { src: artworkUrl, sizes: "96x96", type: "image/png" },
+          { src: artworkUrl, sizes: "128x128", type: "image/png" },
+          { src: artworkUrl, sizes: "192x192", type: "image/png" },
+          { src: artworkUrl, sizes: "256x256", type: "image/png" },
+          { src: artworkUrl, sizes: "512x512", type: "image/png" }
+        ]
+      });
+    } catch (e) {
+      console.warn("Не удалось обновить mediaSession:", e);
+    }
+
+    // Добавляем обработчики управления (можно расширить позже)
+    navigator.mediaSession.setActionHandler('play', () => {
+      if (currentAudio && currentAudio.paused) currentAudio.play();
+    });
+
+    navigator.mediaSession.setActionHandler('pause', () => {
+      if (currentAudio && !currentAudio.paused) currentAudio.pause();
+    });
+
+    navigator.mediaSession.setActionHandler('nexttrack', () => {
+      console.log("Next track");
+    });
+
+    navigator.mediaSession.setActionHandler('previoustrack', () => {
+      console.log("Previous track");
+    });
+  }
 }
