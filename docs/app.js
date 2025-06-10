@@ -150,7 +150,7 @@ function initScrollLoop() {
 
   let direction = 1; // 1 = вниз, -1 = вверх
 
-  // Определяем, мобильное ли устройство
+  // Проверяем, мобильное ли устройство
   const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
   function scrollLoop() {
@@ -179,7 +179,7 @@ function initScrollLoop() {
     requestAnimationFrame(scrollLoop);
   }
 
-  // Остановка при клике или тапе
+  // Только мобильные устройства получают обработчики событий
   if (isMobile) {
     container.addEventListener('click', () => {
       container.classList.add('paused');
